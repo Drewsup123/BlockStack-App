@@ -28,3 +28,8 @@ body{color:#3700FF;text-align:center;}
 /* Input */
 input, textarea{color:#000;}
 input, textarea{color:#000;}
+
+/* Navigation Bar */
+.logo{
+    width : 200px;
+}

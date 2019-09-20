@@ -21,6 +21,13 @@ export default class Profile extends Component {
   	};
   }
 
+  componentWillMount() {
+    const { userSession } = this.props;
+    this.setState({
+      person: new Person(userSession.loadUserData().profile),
+    });
+  }
+
   render() {
     const { handleSignOut, userSession } = this.props;
     const { person } = this.state;
@@ -42,12 +49,5 @@ export default class Profile extends Component {
         </p>
       </div> : null
     );
-  }
-
-  componentWillMount() {
-    const { userSession } = this.props;
-    this.setState({
-      person: new Person(userSession.loadUserData().profile),
-    });
   }
 }

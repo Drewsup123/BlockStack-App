@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import Profile from './Profile.js';
 import Signin from './Signin.js';
+import Homescreen from './Pages/Homescreen';
+import NavBar from './Global/NavBar';
+import Upload from './Pages/Upload';
+import { Route } from 'react-router-dom';
 import {
   UserSession,
   AppConfig
@@ -11,7 +15,15 @@ const userSession = new UserSession({ appConfig: appConfig })
 
 export default class App extends Component {
 
-
+  componentDidMount() {
+    if (userSession.isSignInPending()) {
+      userSession.handlePendingSignIn().then((userData) => {
+        window.history.replaceState({}, document.title, "/")
+        this.setState({ userData: userData})
+      });
+    }
+  }
+  
   handleSignIn(e) {
     e.preventDefault();
     userSession.redirectToSignIn();
@@ -25,22 +37,17 @@ export default class App extends Component {
   render() {
     return (
       <div className="site-wrapper">
-        <div className="site-wrapper-inner">
           { !userSession.isUserSignedIn() ?
             <Signin userSession={userSession} handleSignIn={ this.handleSignIn } />
-            : <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />
+            : 
+            <div>
+              <Route path="/" render={() => <NavBar />} />
+              <Route exact path="/" render={() => <Homescreen />} />
+              <Route path="/upload" render={() => <Upload /> } />
+              <Route path="/profile" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
+            </div>
           }
-        </div>
       </div>
     );
-  }
-
-  componentDidMount() {
-    if (userSession.isSignInPending()) {
-      userSession.handlePendingSignIn().then((userData) => {
-        window.history.replaceState({}, document.title, "/")
-        this.setState({ userData: userData})
-      });
-    }
   }
 }
