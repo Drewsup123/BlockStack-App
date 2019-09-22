@@ -1,6 +1,7 @@
 import React from 'react';
-import {Editor, EditorState, RichUtils, convertToRaw} from 'draft-js';
-import createMarkdownShortcutsPlugin from 'draft-js-markdown-shortcuts-plugin';
+import {EditorState, RichUtils, convertToRaw} from 'draft-js';
+import Editor from 'draft-js-plugins-editor';
+import createToolbarPlugin from 'draft-js-static-toolbar-plugin';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
@@ -10,6 +11,7 @@ import FormatBoldIcon from '@material-ui/icons/FormatBold';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
+import 'draft-js/dist/Draft.css'
 
 const styles = {
     container : {
@@ -35,9 +37,7 @@ const styles = {
     },
 }
 
-const plugins = [
-    createMarkdownShortcutsPlugin()
-];
+const toolbarPlugin = createToolbarPlugin();
 
 class FileEditor extends React.Component {
     constructor(props) {
@@ -57,18 +57,18 @@ class FileEditor extends React.Component {
         const {classes} = this.props;
         return (
             <div className={classes.container}>
-                <Toolbar>
+                {/* <Toolbar>
                     <List>
                         <IconButton onClick={() => {this.makeBold()}}>
                             <FormatBoldIcon />
                         </IconButton>
                     </List>
-                </Toolbar>
+                </Toolbar> */}
                 <Paper className={classes.paper}>
                     <Editor 
                         editorState={this.state.editorState} 
                         onChange={this.onChange} 
-                        plugins={plugins}
+                        plugins={[toolbarPlugin]}
                     />
                 </Paper>
             </div>
