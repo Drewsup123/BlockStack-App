@@ -4,6 +4,7 @@ import Signin from './Signin.js';
 import Homescreen from './Pages/Homescreen';
 import NavBar from './Global/NavBar';
 import Upload from './Pages/Upload';
+import FileEditor from './Pages/Editor';
 import { Route } from 'react-router-dom';
 import {
   UserSession,
@@ -42,9 +43,12 @@ export default class App extends Component {
             : 
             <div>
               <Route path="/" render={() => <NavBar />} />
-              <Route exact path="/" render={() => <Homescreen />} />
-              <Route path="/upload" render={() => <Upload /> } />
-              <Route path="/profile" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
+              <div id="test" style={{boxSizing : "border-box", paddingLeft : "250px"}}>
+                  <Route exact path="/" render={() => <Homescreen />} />
+                  <Route path="/upload" render={() => <Upload /> } />
+                  <Route path="/profile" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
+                  <Route path="/editor" render={() => <FileEditor />} />
+              </div>
             </div>
           }
       </div>
