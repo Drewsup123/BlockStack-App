@@ -3,6 +3,7 @@ import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import { withStyles } from '@material-ui/styles';
 import EditorToolbar from '../components/Toolbar';
+import SaveIcon from '@material-ui/icons/Save';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 
@@ -33,7 +34,7 @@ const styles = {
 class FileEditor extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { text: '' } // You can also pass a Quill Delta here
+        this.state = { text: this.props.text } // You can also pass a Quill Delta here
         this.handleChange = this.handleChange.bind(this);
     }
     
@@ -68,6 +69,7 @@ class FileEditor extends React.Component {
         return (
             <Paper className={classes.paper}>
                 {/* <EditorToolbar /> */}
+                <SaveIcon />
                 <ReactQuill 
                     style={{height : "100%"}}
                     value={this.state.text}

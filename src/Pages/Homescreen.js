@@ -8,10 +8,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import ListItemText from '@material-ui/core/ListItemText';
+import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import FolderIcon from '@material-ui/icons/Folder';
 import { withStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
 import AddContentModal from '../components/homescreen/AddContentModal';
-import TreeView from '@material-ui/lab/TreeView';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import { UserSession } from 'blockstack';
 
@@ -29,11 +30,29 @@ class Homescreen extends React.Component{
     constructor(){
         super();
         this.state = {
-            data : [],
+            data : {},
             newFolderOpen : false,
             newFileOpen : false,
             uploadFileOpen : false,
+            userSession : null
         }
+    }
+
+    userSession = new UserSession();
+
+    componentDidMount(){
+        this.userSession.getFile("/data", {decrypt : false}).then(fileContents => {
+            console.log(fileContents);
+            this.setState({ data : JSON.parse(fileContents)});
+        })
+        // this.userSession.deleteFile("/data")
+        // .then(() => {
+        //     console.log("removed")
+        // })
+    }
+
+    componentDidUpdate(){
+        console.log(this.state)
     }
 
     handleClose = name => {
@@ -44,17 +63,65 @@ class Homescreen extends React.Component{
         this.setState({ [name] : true })
     }
 
-    handleSubmit = (name, type, toClose) => {
-        if(name){
-            if(type === "file"){
-                console.log("file");
+    handleSubmit = async(name, type, toClose) => {
+        let data = this.state.data;
+        if(type === "file"){
+            // console.log("file");
+            console.log(data);
+            const emptyFile = {
+                type : "file",
+                fileType : "doc",
+                name : name,
+                data : <p>testing</p>,
+            };
+            if(data === null){
+                const object = {
+                    0 : emptyFile
+                }
+                this.userSession.putFile("/data", JSON.stringify(object), {encrypt : false}).then(() => {
+                    this.setState({ data : object});
+                })
             }else{
-                console.log("Folder")
+                console.log("type of data", typeof data)
+                const dataLength = Object.keys(data).length;
+                console.log("index", dataLength);
+                data[dataLength] = emptyFile;
+                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                    this.setState({ data : data });
+                })
             }
-            this.setState({ [toClose] : false })
         }else{
-            alert("Please input name")
+            console.log("Folder")
+            const newFolder = {
+                type : "folder",
+                name : name,
+                data : [],
+            }
+            if(data === null){
+                const object = {
+                    0 : newFolder,
+                }
+                this.userSession.putFile("/data", JSON.stringify(object), {encrypt : false}).then(() => {
+                    this.setState({ data : object});
+                })
+            }else{
+                console.log("type of data", typeof data)
+                const dataLength = Object.keys(data).length;
+                console.log("index", dataLength);
+                data[dataLength] = newFolder;
+                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                    this.setState({ data : data });
+                })
+            }
         }
+        this.setState({ [toClose] : false })
+    }
+
+    handleClick = (e, type, index, data) => {
+        e.preventDefault();
+        console.log(type, index);
+        this.props.changeText(data);
+        this.props.history.push("/editor")
     }
 
     render(){
@@ -90,6 +157,27 @@ class Homescreen extends React.Component{
                         </ListItem>
                     </List>
                 </Toolbar>
+                <Breadcrumbs aria-label="breadcrumb">
+
+                </Breadcrumbs>
+                <List>
+                    {
+                    this.state.data 
+                    ?
+                    Object.values(data).map((item, index) =>
+                        <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data)}>
+                            <ListItemIcon>
+                                {item.type === "file" ? <InsertDriveFileIcon /> : <FolderIcon />}
+                            </ListItemIcon>
+                            <ListItemText>
+                                {item.name}
+                            </ListItemText>
+                        </ListItem>
+                    )
+                    :<p>You Haven't Created any files yet</p>
+                    }
+                </List>
+
                 <AddContentModal 
                     name="newFolderOpen" 
                     title="Create New Folder" 

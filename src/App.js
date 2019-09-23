@@ -15,6 +15,12 @@ const appConfig = new AppConfig()
 const userSession = new UserSession({ appConfig: appConfig })
 
 export default class App extends Component {
+  constructor(){
+    super();
+    this.state = {
+      text : "",
+    }
+  }
 
   componentDidMount() {
     if (userSession.isSignInPending()) {
@@ -35,6 +41,11 @@ export default class App extends Component {
     userSession.signUserOut(window.location.origin);
   }
 
+  setText = text => {
+    this.setState({ text : text });
+    console.log("updated text")
+  }
+
   render() {
     return (
       <div className="site-wrapper">
@@ -44,11 +55,11 @@ export default class App extends Component {
             <div>
               <Route path="/" render={() => <NavBar />} />
               <div id="test" style={{boxSizing : "border-box", paddingLeft : "250px"}}>
-                  <Route exact path="/files/:path?" render={() => <Homescreen />} />
+                  <Route exact path="/files/:path?" render={(props) => <Homescreen {...props} changeText={this.setText}/>} />
                   <Route path="/upload" render={() => <Upload /> } />
                   <Route path="/profile" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
                   <Route exact path="/" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
-                  <Route path="/editor" render={() => <FileEditor />} />
+                  <Route path="/editor" render={() => <FileEditor text={this.state.text} />} />
               </div>
             </div>
           }
