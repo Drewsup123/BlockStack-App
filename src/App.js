@@ -59,7 +59,7 @@ export default class App extends Component {
                   <Route path="/upload" render={() => <Upload /> } />
                   <Route path="/profile" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
                   <Route exact path="/" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
-                  <Route path="/editor" render={() => <FileEditor text={this.state.text} />} />
+                  <Route path="/editor/:path" render={(props) => <FileEditor userSession={userSession} text={this.state.text} {...props}/>} />
               </div>
             </div>
           }

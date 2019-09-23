@@ -43,6 +43,13 @@ class FileEditor extends React.Component {
         console.log(this.state.text)
     }
 
+    handleSaveChanges = e => {
+        e.preventDefault();
+        const path = this.props.match.params.path;
+        console.log(path);
+        this.props.userSession.putFile(`/data/${path}`, JSON.stringify(this.state.text), {encrypt : false})
+    }
+
     modules = {
         toolbar: [
             [{ 'font': [] }, {'color' : []}],
@@ -69,7 +76,7 @@ class FileEditor extends React.Component {
         return (
             <Paper className={classes.paper}>
                 {/* <EditorToolbar /> */}
-                <SaveIcon />
+                <SaveIcon onClick={this.handleSaveChanges} />
                 <ReactQuill 
                     style={{height : "100%"}}
                     value={this.state.text}

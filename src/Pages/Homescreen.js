@@ -34,7 +34,9 @@ class Homescreen extends React.Component{
             newFolderOpen : false,
             newFileOpen : false,
             uploadFileOpen : false,
-            userSession : null
+            userSession : null,
+            history : "",
+            fileHistory : [],
         }
     }
 
@@ -117,11 +119,16 @@ class Homescreen extends React.Component{
         this.setState({ [toClose] : false })
     }
 
-    handleClick = (e, type, index, data) => {
+    handleClick = async(e, type, index, data) => {
         e.preventDefault();
         console.log(type, index);
-        this.props.changeText(data);
-        this.props.history.push("/editor")
+        if(type === 'file'){
+            await this.setState({ history : this.state.history + `${index}` })
+            await this.props.changeText(data);
+            this.props.history.push(`/editor/${this.state.history}`)
+        }else{
+            this.props.history.push(`/files/${this.state.history + index}`)
+        }
     }
 
     render(){
