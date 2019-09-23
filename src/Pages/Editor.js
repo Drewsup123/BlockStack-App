@@ -1,17 +1,10 @@
 import React from 'react';
-import {EditorState, RichUtils, convertToRaw} from 'draft-js';
-import Editor from 'draft-js-plugins-editor';
-import createToolbarPlugin from 'draft-js-static-toolbar-plugin';
-import Paper from '@material-ui/core/Paper';
+import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill';
 import { withStyles } from '@material-ui/styles';
+import EditorToolbar from '../components/Toolbar';
 import PropTypes from 'prop-types';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import FormatBoldIcon from '@material-ui/icons/FormatBold';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import 'draft-js/dist/Draft.css'
+import Paper from '@material-ui/core/Paper';
 
 const styles = {
     container : {
@@ -37,46 +30,57 @@ const styles = {
     },
 }
 
-const toolbarPlugin = createToolbarPlugin();
-
 class FileEditor extends React.Component {
     constructor(props) {
-        super(props);
-        this.state = {
-            editorState: EditorState.createEmpty()
-        };
+        super(props)
+        this.state = { text: '' } // You can also pass a Quill Delta here
+        this.handleChange = this.handleChange.bind(this);
+    }
+    
+    handleChange(value) {
+        this.setState({ text: value });
+        console.log(this.state.text)
     }
 
-    onChange = (editorState) => {
-        this.setState({
-            editorState,
-        });
+    modules = {
+        toolbar: [
+            [{ 'font': [] }, {'color' : []}],
+            [{ 'header': [1, 2, false] }],
+            ['bold', 'italic', 'underline','strike', 'blockquote'],
+            [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}, { 'align': [] }],
+            ['link', 'image'],
+            ['blockquote', 'code-block'],
+            ['clean']
+        ],
     };
-
+    
+    formats = [
+        'font', 'color',
+        'header',
+        'bold', 'italic', 'underline', 'strike', 'blockquote',
+        'list', 'bullet', 'indent', 'align',
+        'link', 'image',
+        'blockquote', 'code-block'
+    ];
+    
     render() {
         const {classes} = this.props;
         return (
-            <div className={classes.container}>
-                {/* <Toolbar>
-                    <List>
-                        <IconButton onClick={() => {this.makeBold()}}>
-                            <FormatBoldIcon />
-                        </IconButton>
-                    </List>
-                </Toolbar> */}
-                <Paper className={classes.paper}>
-                    <Editor 
-                        editorState={this.state.editorState} 
-                        onChange={this.onChange} 
-                        plugins={[toolbarPlugin]}
-                    />
-                </Paper>
-            </div>
-        );
+            <Paper className={classes.paper}>
+                {/* <EditorToolbar /> */}
+                <ReactQuill 
+                    style={{height : "100%"}}
+                    value={this.state.text}
+                    onChange={this.handleChange}
+                    modules={this.modules}
+                    formats={this.formats}
+                />
+            </Paper>
+        )
     }
 }
 
-Editor.propTypes = {
+FileEditor.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 

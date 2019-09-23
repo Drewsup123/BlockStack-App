@@ -5,7 +5,6 @@ import Homescreen from './Pages/Homescreen';
 import NavBar from './Global/NavBar';
 import Upload from './Pages/Upload';
 import FileEditor from './Pages/Editor';
-import MyEditor from './Pages/Test';
 import { Route } from 'react-router-dom';
 import {
   UserSession,
@@ -49,7 +48,6 @@ export default class App extends Component {
                   <Route path="/upload" render={() => <Upload /> } />
                   <Route path="/profile" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
                   <Route path="/editor" render={() => <FileEditor />} />
-                  <Route path="/myeditor" render={() => <MyEditor />} />
               </div>
             </div>
           }
