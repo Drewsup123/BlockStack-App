@@ -85,13 +85,13 @@ export default function PermanentDrawerLeft() {
                     </ListItem>
                 </Link>
 
-                <Link to="/" className={classes.link}>
+                <Link to="/files" className={classes.link}>
                     <ListItem button>
                         <ListItemIcon>
                             <HomeIcon size="small" />
                         </ListItemIcon>
                         <ListItemText>
-                            Home
+                            Files
                         </ListItemText>
                     </ListItem>
                 </Link>

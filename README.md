@@ -66,3 +66,31 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+Schema
+
+data : {
+    idOfFolder : 
+    {
+        type : folder,
+        folderData : [
+            idOfanotherFoler : {
+                type : "folder",
+                folderData : [idofFile : {
+                    type : file,
+                    fileData : "encryptedGibberish",
+                }]
+            },
+            idOfFile : {
+                type : "file",
+                fileData : "moreEncryptedGibberish",
+            }
+        ]
+    },
+    idOfFile : {
+        type : "file",
+        fileType : "pdf/image/etc",
+        fileData : "encryptedGibberishAgain"
+    }
+
+}

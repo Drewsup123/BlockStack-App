@@ -11,6 +11,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
 import AddContentModal from '../components/homescreen/AddContentModal';
+import TreeView from '@material-ui/lab/TreeView';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import { UserSession } from 'blockstack';
 
 const styles = {
     toolbar: {

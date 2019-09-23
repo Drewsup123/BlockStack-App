@@ -44,9 +44,10 @@ export default class App extends Component {
             <div>
               <Route path="/" render={() => <NavBar />} />
               <div id="test" style={{boxSizing : "border-box", paddingLeft : "250px"}}>
-                  <Route exact path="/" render={() => <Homescreen />} />
+                  <Route exact path="/files/:path?" render={() => <Homescreen />} />
                   <Route path="/upload" render={() => <Upload /> } />
                   <Route path="/profile" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
+                  <Route exact path="/" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
                   <Route path="/editor" render={() => <FileEditor />} />
               </div>
             </div>
