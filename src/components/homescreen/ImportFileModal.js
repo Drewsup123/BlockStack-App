@@ -6,7 +6,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import Slide from '@material-ui/core/Slide';
-import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -58,6 +57,7 @@ export default class ImportFileModal extends React.Component{
             <Dialog open={open} onClose={() => handleClose(name)} TransitionComponent={Transition}>
                 <DialogTitle>Import a File</DialogTitle>
                 <DialogContent>
+                    <p>As of right now we support pdf's, jpg's, and png's</p>
                     <TextField 
                         autoComplete="off"
                         id="outlined-name" 
@@ -87,7 +87,7 @@ export default class ImportFileModal extends React.Component{
                     <Button onClick={() => handleClose(name)} color="primary">
                         Cancel
                     </Button>
-                    <Button color="primary" onClick={this.onSubmit}>
+                    <Button disabled={!this.state.selectedFile || !this.state.name} color="primary" onClick={this.onSubmit}>
                         Upload
                     </Button>
                 </DialogActions>
