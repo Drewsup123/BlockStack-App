@@ -18,6 +18,7 @@ import ShowDataModal from '../components/homescreen/ShowDataModal';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { UserSession } from 'blockstack';
 import { connect } from 'react-redux';
 import { updateText, updatePath, updateData, downOneLevel, upOneLevel, updateFileIndex } from '../Redux/actions';
@@ -234,6 +235,30 @@ class Homescreen extends React.Component{
         }
     }
 
+    deleteFile = (e, index) => {
+        e.preventDefault();
+        e.stopPropagation();
+        let data = this.props.data;
+        let path = this.props.path;
+        if(path.length){
+            console.log("this should be the folder", data[path[0]])
+            let folder = data[path[0]];
+            for(let i = 1; i < path.length; i++){
+                folder = folder.data[path[i]]
+            }
+            delete folder.data[index]
+            this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                this.props.updateData(data);
+            })
+        }else{
+            console.log("type of data", typeof data)
+            delete data[index]
+            this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                this.props.updateData(data);
+            })
+        }
+    }
+
     render(){
         const {classes} = this.props;
         const { data, newFileOpen, newFolderOpen, uploadFileOpen, ShowDataOpen, dataItem } = this.state;
@@ -293,6 +318,9 @@ class Homescreen extends React.Component{
                                 <ListItemText>
                                     {item.name}
                                 </ListItemText>
+                                <ListItemIcon>
+                                    <DeleteIcon onClick={e => this.deleteFile(e, index)} color="secondary"/>
+                                </ListItemIcon>
                             </ListItem>
                         ) 
                         : <p>No Files in this folder</p>
