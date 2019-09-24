@@ -71,6 +71,16 @@ class Homescreen extends React.Component{
         console.log(this.state)
     }
 
+    deleteAllData = e => {
+        e.preventDefault();
+        this.userSession.deleteFile("/data")
+        .then(() => {
+            console.log("removed")
+        }).catch(err => {
+            alert("Error deleting data")
+        })
+    }
+
     handleClose = name => {
         this.setState({ [name] : false })
     }
@@ -96,7 +106,7 @@ class Homescreen extends React.Component{
                     0 : emptyFile
                 }
                 this.userSession.putFile("/data", JSON.stringify(object), {encrypt : false}).then(() => {
-                    this.setState({ data : object});
+                    this.props.updateData(object);
                 })
             }else{
                 if(path.length){
@@ -288,6 +298,14 @@ class Homescreen extends React.Component{
                             </ListItemIcon>
                             <ListItemText>
                                 Create File
+                            </ListItemText>
+                        </ListItem>
+                        <ListItem button onClick={this.deleteAllData}>
+                            <ListItemIcon>
+                                <DeleteIcon color="secondary" size="small" />
+                            </ListItemIcon>
+                            <ListItemText>
+                                DELETE ALL DATA
                             </ListItemText>
                         </ListItem>
                     </List>
