@@ -13,6 +13,7 @@ import FolderIcon from '@material-ui/icons/Folder';
 import { withStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
 import AddContentModal from '../components/homescreen/AddContentModal';
+import ImportFileModal from '../components/homescreen/ImportFileModal';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -178,7 +179,7 @@ class Homescreen extends React.Component{
                                 Add Folder
                             </ListItemText>
                         </ListItem>
-                        <ListItem button>
+                        <ListItem button onClick={() => this.handleOpen("uploadFileOpen")} >
                             <ListItemIcon>
                                 <CloudUploadIcon size="small" />
                             </ListItemIcon>
@@ -207,23 +208,6 @@ class Homescreen extends React.Component{
                         <ArrowBackIcon />
                     </IconButton>
                 </Breadcrumbs>
-                {/* <List>
-                    {
-                    this.props.data 
-                    ?
-                    Object.values(this.props.data).map((item, index) =>
-                        <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data)}>
-                            <ListItemIcon>
-                                {item.type === "file" ? <InsertDriveFileIcon /> : <FolderIcon />}
-                            </ListItemIcon>
-                            <ListItemText>
-                                {item.name}
-                            </ListItemText>
-                        </ListItem>
-                    )
-                    :<p>You Haven't Created any files yet</p>
-                    }
-                </List> */}
 
                 <List>
                     {
@@ -274,6 +258,11 @@ class Homescreen extends React.Component{
                     handleClose={this.handleClose} 
                     handleSubmit={this.handleSubmit}
                     type="file"
+                />
+                <ImportFileModal 
+                    open={uploadFileOpen}
+                    name="uploadFileOpen"
+                    handleClose={this.handleClose}
                 />
             </div>
         )
