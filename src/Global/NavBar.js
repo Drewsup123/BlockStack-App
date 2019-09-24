@@ -12,6 +12,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import PersonIcon from '@material-ui/icons/Person';
 import HomeIcon from '@material-ui/icons/Home';
+import FeedbackIcon from '@material-ui/icons/Feedback';
 import { Link } from 'react-router-dom';
 import Logo from './logo.png';
 
@@ -95,16 +96,16 @@ export default function PermanentDrawerLeft() {
                         </ListItemText>
                     </ListItem>
                 </Link>
-                {/* <Link to="/editor" className={classes.link}>
+                <a style={{color : "black", textDecoration : "none"}}href="https://forms.gle/3Aghwd6aUs6E7Q769" target="_blank">
                     <ListItem button>
                         <ListItemIcon>
-                            <HomeIcon size="small" />
+                            <FeedbackIcon size="small" />
                         </ListItemIcon>
                         <ListItemText>
-                            Editor (Delete Later)
+                            Make a Suggestion
                         </ListItemText>
                     </ListItem>
-                </Link> */}
+                </a>
             </List>
         </Drawer>
         </div>

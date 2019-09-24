@@ -38,6 +38,7 @@ jspm_packages
 
 # Custom
 .DS_Store
-build
+build/*
 ./build
 .build
+/build

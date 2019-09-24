@@ -269,6 +269,30 @@ class Homescreen extends React.Component{
         }
     }
 
+    editFileName = (e, index, name) => {
+        e.preventDefault();
+        e.stopPropagation();
+        let data = this.props.data;
+        let path = this.props.path;
+        if(path.length){
+            console.log("this should be the folder", data[path[0]])
+            let folder = data[path[0]];
+            for(let i = 1; i < path.length; i++){
+                folder = folder.data[path[i]]
+            }
+            folder.data[index].name = name;
+            this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                this.props.updateData(data);
+            })
+        }else{
+            console.log("type of data", typeof data)
+            data[index].name = name
+            this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                this.props.updateData(data);
+            })
+        }
+    }
+
     render(){
         const {classes} = this.props;
         const { data, newFileOpen, newFolderOpen, uploadFileOpen, ShowDataOpen, dataItem } = this.state;
