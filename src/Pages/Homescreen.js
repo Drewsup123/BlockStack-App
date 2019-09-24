@@ -14,6 +14,8 @@ import { withStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
 import AddContentModal from '../components/homescreen/AddContentModal';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { UserSession } from 'blockstack';
 import { connect } from 'react-redux';
 import { updateText, updatePath, updateData, downOneLevel, upOneLevel } from '../Redux/actions';
@@ -200,7 +202,9 @@ class Homescreen extends React.Component{
                         ? this.props.path.map(value => <p>{value}</p>)
                         : null
                     }
-                    <button onClick={() => this.props.upOneLevel()}>Up a level</button>
+                    <IconButton disabled={!this.props.path.length} onClick={() => this.props.upOneLevel()}>
+                        <ArrowBackIcon />
+                    </IconButton>
                 </Breadcrumbs>
                 {/* <List>
                     {
