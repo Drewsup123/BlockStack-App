@@ -1,4 +1,4 @@
-import {UPDATE_DATA, UPDATE_TEXT, DOWN_ONE_LEVEL, UP_ONE_LEVEL} from './actions';
+import {UPDATE_DATA, UPDATE_TEXT, DOWN_ONE_LEVEL, UP_ONE_LEVEL, UPDATE_FILE_INDEX} from './actions';
 
 const initialState = {
     data : {},
@@ -6,6 +6,7 @@ const initialState = {
     breadcrumbs : [],
     text : "",
     levels : [],
+    fileIndex : null,
 }
 
 export const reducer = (state = initialState, action) => {
@@ -21,7 +22,7 @@ export const reducer = (state = initialState, action) => {
             let levels = [...state.levels];
             let folder = state.data[path[0]];
             for(let i = 1; i < path.length; i++){
-                folder = folder.data[i]
+                folder = folder.data[path[i]]
             }
             console.log("folder pushed to levels", folder)
             levels.push(folder);
@@ -32,6 +33,8 @@ export const reducer = (state = initialState, action) => {
             updatedPath.pop()
             updatedLevels.pop()
             return {...state, path : updatedPath, levels : updatedLevels }
+        case UPDATE_FILE_INDEX:
+            return {...state, fileIndex : action.payload};
         default:
             return state;
     }

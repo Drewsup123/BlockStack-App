@@ -49,11 +49,24 @@ class FileEditor extends React.Component {
 
     handleSaveChanges = e => {
         e.preventDefault();
-        const path = this.props.match.params.path;
-        console.log(path);
-        let final = {...this.props.data};
-        final[path].data = this.state.text;
-        this.props.userSession.putFile(`/data`, JSON.stringify(final), {encrypt : false})
+        if(this.props.path.length){
+            const data = {...this.props.data};
+            const path = [...this.props.path]
+            let folder = data[path[0]];
+            for(let i = 1; i < path.length; i++){
+                folder = folder.data[path[i]]
+            }
+            console.log("folder it is changing!!!!", folder)
+            folder.data[this.props.index].data = this.state.text;
+            this.props.updateData(data);
+            this.props.userSession.putFile(`/data`, JSON.stringify(data), {encrypt : false})
+        }else{
+            const path = this.props.match.params.path;
+            console.log(path);
+            let final = {...this.props.data};
+            final[path].data = this.state.text;
+            this.props.userSession.putFile(`/data`, JSON.stringify(final), {encrypt : false})
+        }
     }
 
     modules = {
@@ -104,6 +117,7 @@ const mapStateToProps = state => {
         data : state.data,
         path : state.path,
         text : state.text,
+        index : state.fileIndex,
     }
 }
 const ws = withStyles(styles)(FileEditor)

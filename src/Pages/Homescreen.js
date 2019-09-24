@@ -18,7 +18,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { UserSession } from 'blockstack';
 import { connect } from 'react-redux';
-import { updateText, updatePath, updateData, downOneLevel, upOneLevel } from '../Redux/actions';
+import { updateText, updatePath, updateData, downOneLevel, upOneLevel, updateFileIndex } from '../Redux/actions';
 
 const styles = {
     toolbar: {
@@ -93,7 +93,7 @@ class Homescreen extends React.Component{
                     console.log("this should be the folder", data[path[0]])
                     let folder = data[path[0]];
                     for(let i = 1; i < path.length; i++){
-                        folder = folder.data[i]
+                        folder = folder.data[path[i]]
                     }
                     const folderLength = Object.keys(folder.data).length;
                     folder.data[folderLength] = emptyFile;
@@ -129,7 +129,7 @@ class Homescreen extends React.Component{
                     console.log("this should be the folder", data[path[0]])
                     let folder = data[path[0]];
                     for(let i = 1; i < path.length; i++){
-                        folder = folder.data[i]
+                        folder = folder.data[path[i]]
                     }
                     const folderLength = Object.keys(folder.data).length;
                     folder.data[folderLength] = newFolder;
@@ -156,6 +156,7 @@ class Homescreen extends React.Component{
         if(type === 'file'){
             await this.setState({ history : this.state.history + `${index}` })
             await this.props.updateText(data);
+            this.props.updateFileIndex(index);
             this.props.history.push(`/editor/${this.state.history}`)
         }else{
             this.props.downOneLevel(index)
@@ -292,4 +293,4 @@ const mapStateToProps = state => {
     }
 }
 const ws = withStyles(styles)(Homescreen)
-export default connect(mapStateToProps, { updateText, updateData, updatePath, downOneLevel, upOneLevel })(ws);
+export default connect(mapStateToProps, { updateText, updateData, updatePath, downOneLevel, upOneLevel, updateFileIndex })(ws);
