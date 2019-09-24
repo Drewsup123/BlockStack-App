@@ -13,7 +13,7 @@ export const reducer = (state = initialState, action) => {
 
     switch(action.type){
         case UPDATE_DATA:
-            return { ...state, data : action.payload, levels : [], path : [] };
+            return { ...state, data : action.payload, levels : [], path : [], breadcrumbs : [] };
         case UPDATE_TEXT:
             return { ...state, text : action.payload }
         case DOWN_ONE_LEVEL:
@@ -32,9 +32,11 @@ export const reducer = (state = initialState, action) => {
         case UP_ONE_LEVEL:
             const updatedPath = [...state.path];
             const updatedLevels = [...state.levels]
+            const updatedBread = [...state.breadcrumbs];
             updatedPath.pop()
-            updatedLevels.pop()
-            return {...state, path : updatedPath, levels : updatedLevels }
+            updatedLevels.pop();
+            updatedBread.pop();
+            return {...state, path : updatedPath, levels : updatedLevels, breadcrumbs : updatedBread }
         case UPDATE_FILE_INDEX:
             return {...state, fileIndex : action.payload};
         default:
