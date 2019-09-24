@@ -13,8 +13,8 @@ export const updateData = (payload) => dispatch => {
     dispatch({type: UPDATE_DATA, payload:payload})
 }
 
-export const downOneLevel = index => dispatch => {
-    dispatch({ type : DOWN_ONE_LEVEL, payload : index });
+export const downOneLevel = (index, name) => dispatch => {
+    dispatch({ type : DOWN_ONE_LEVEL, payload : {index : index, name : name} });
 }
 
 export const upOneLevel = () => dispatch => {

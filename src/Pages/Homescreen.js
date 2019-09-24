@@ -150,16 +150,16 @@ class Homescreen extends React.Component{
         this.setState({ [toClose] : false })
     }
 
-    handleClick = async(e, type, index, data) => {
+    handleClick = async(e, type, index, data, name) => {
         e.preventDefault();
-        console.log(type, index);
+        console.log(type, index, name);
         if(type === 'file'){
             await this.setState({ history : this.state.history + `${index}` })
             await this.props.updateText(data);
             this.props.updateFileIndex(index);
             this.props.history.push(`/editor/${this.state.history}`)
         }else{
-            this.props.downOneLevel(index)
+            this.props.downOneLevel(index, name)
         }
     }
 
@@ -199,8 +199,8 @@ class Homescreen extends React.Component{
                 <Breadcrumbs aria-label="breadcrumb">
                     <p>root</p>
                     {
-                        this.props.path.length 
-                        ? this.props.path.map(value => <p>{value}</p>)
+                        this.props.breadcrumbs.length 
+                        ? this.props.breadcrumbs.map(value => <p>{value}</p>)
                         : null
                     }
                     <IconButton disabled={!this.props.path.length} onClick={() => this.props.upOneLevel()}>
@@ -232,7 +232,7 @@ class Homescreen extends React.Component{
                     this.props.levels[this.props.levels.length - 1].data
                         ?
                         Object.values(this.props.levels[this.props.levels.length - 1].data).map((item, index) =>
-                            <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data)}>
+                            <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data, item.name)}>
                                 <ListItemIcon>
                                     {item.type === "file" ? <InsertDriveFileIcon /> : <FolderIcon />}
                                 </ListItemIcon>
@@ -246,7 +246,7 @@ class Homescreen extends React.Component{
                     this.props.data
                         ?
                         Object.values(this.props.data).map((item, index) =>
-                        <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data)}>
+                        <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data, item.name)}>
                             <ListItemIcon>
                                 {item.type === "file" ? <InsertDriveFileIcon /> : <FolderIcon />}
                             </ListItemIcon>
@@ -290,6 +290,7 @@ const mapStateToProps = state => {
         path : state.path,
         text : state.text,
         levels : state.levels,
+        breadcrumbs : state.breadcrumbs,
     }
 }
 const ws = withStyles(styles)(Homescreen)

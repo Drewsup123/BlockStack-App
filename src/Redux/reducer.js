@@ -18,7 +18,9 @@ export const reducer = (state = initialState, action) => {
             return { ...state, text : action.payload }
         case DOWN_ONE_LEVEL:
             let path = [...state.path];
-            path.push(action.payload);
+            let breadcrumbs = [...state.breadcrumbs];
+            breadcrumbs.push(action.payload.name);
+            path.push(action.payload.index);
             let levels = [...state.levels];
             let folder = state.data[path[0]];
             for(let i = 1; i < path.length; i++){
@@ -26,7 +28,7 @@ export const reducer = (state = initialState, action) => {
             }
             console.log("folder pushed to levels", folder)
             levels.push(folder);
-            return {...state, path : path, levels : levels}
+            return {...state, path : path, levels : levels, breadcrumbs : breadcrumbs }
         case UP_ONE_LEVEL:
             const updatedPath = [...state.path];
             const updatedLevels = [...state.levels]
