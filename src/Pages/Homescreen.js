@@ -14,6 +14,7 @@ import { withStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
 import AddContentModal from '../components/homescreen/AddContentModal';
 import ImportFileModal from '../components/homescreen/ImportFileModal';
+import ShowDataModal from '../components/homescreen/ShowDataModal';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -22,6 +23,11 @@ import { connect } from 'react-redux';
 import { updateText, updatePath, updateData, downOneLevel, upOneLevel, updateFileIndex } from '../Redux/actions';
 
 const styles = {
+    root: {
+        boxSizing : "border-box",
+        padding : "20px",
+        paddingTop : "60px"
+    },
     toolbar: {
         width : `calc(100% - 240px)`,
         display : "flex",
@@ -38,9 +44,11 @@ class Homescreen extends React.Component{
             newFolderOpen : false,
             newFileOpen : false,
             uploadFileOpen : false,
+            ShowDataOpen : false,
             userSession : null,
             history : "",
             fileHistory : [],
+            dataItem : null,
         }
     }
 
@@ -151,24 +159,86 @@ class Homescreen extends React.Component{
         this.setState({ [toClose] : false })
     }
 
-    handleClick = async(e, type, index, data, name) => {
+    // handleClick = async(e, type, index, data, name) => {
+    //     e.preventDefault();
+    //     console.log(type, index, name);
+    //     if(type === 'file'){
+    //         await this.setState({ history : this.state.history + `${index}` })
+    //         await this.props.updateText(data);
+    //         this.props.updateFileIndex(index);
+    //         this.props.history.push(`/editor/${this.state.history}`)
+    //     }else{
+    //         this.props.downOneLevel(index, name)
+    //     }
+    // }
+
+    handleClick = async(e, index, item) => {
         e.preventDefault();
-        console.log(type, index, name);
+        const {type, name, fileType, data } = item;
+        console.log(item);
         if(type === 'file'){
-            await this.setState({ history : this.state.history + `${index}` })
-            await this.props.updateText(data);
-            this.props.updateFileIndex(index);
-            this.props.history.push(`/editor/${this.state.history}`)
+            if(fileType === "image/png" || fileType === "image/jpg" || fileType === "application/pdf"){
+                console.log("this is an image")
+                this.setState({ dataItem : item, ShowDataOpen : true})
+            }else{
+                await this.setState({ history : this.state.history + `${index}` })
+                await this.props.updateText(data);
+                this.props.updateFileIndex(index);
+                this.props.history.push(`/editor/${this.state.history}`)
+            }
         }else{
             this.props.downOneLevel(index, name)
         }
     }
 
+    handleFileImportSubmit = (name, type, base64) => {
+        let data = this.props.data;
+        let path = this.props.path;
+        const emptyFile = {
+            type : "file",
+            fileType : type,
+            name : name,
+            data : base64,
+        };
+        if(data === null){
+            const object = {
+                0 : emptyFile
+            }
+            this.userSession.putFile("/data", JSON.stringify(object), {encrypt : false}).then(() => {
+                this.props.updateData(object);
+                this.setState({ uploadFileOpen : false})
+            })
+        }else{
+            if(path.length){
+                console.log("this should be the folder", data[path[0]])
+                let folder = data[path[0]];
+                for(let i = 1; i < path.length; i++){
+                    folder = folder.data[path[i]]
+                }
+                const folderLength = Object.keys(folder.data).length;
+                folder.data[folderLength] = emptyFile;
+                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                    this.props.updateData(data);
+                    this.setState({ uploadFileOpen : false})
+                })
+            }else{
+                console.log("type of data", typeof data)
+                const dataLength = Object.keys(data).length;
+                console.log("index", dataLength);
+                data[dataLength] = emptyFile;
+                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                    this.props.updateData(data);
+                    this.setState({ uploadFileOpen : false})
+                })
+            }
+        }
+    }
+
     render(){
         const {classes} = this.props;
-        const { data, newFileOpen, newFolderOpen, uploadFileOpen } = this.state;
+        const { data, newFileOpen, newFolderOpen, uploadFileOpen, ShowDataOpen, dataItem } = this.state;
         return(
-            <div>
+            <div className={classes.root}>
                 <Toolbar className={classes.toolbar}>
                     <List className={classes.toolbar}>
                         <ListItem button>
@@ -216,7 +286,7 @@ class Homescreen extends React.Component{
                     this.props.levels[this.props.levels.length - 1].data
                         ?
                         Object.values(this.props.levels[this.props.levels.length - 1].data).map((item, index) =>
-                            <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data, item.name)}>
+                            <ListItem key={index} button onClick={e => this.handleClick(e, index, item)}>
                                 <ListItemIcon>
                                     {item.type === "file" ? <InsertDriveFileIcon /> : <FolderIcon />}
                                 </ListItemIcon>
@@ -230,7 +300,7 @@ class Homescreen extends React.Component{
                     this.props.data
                         ?
                         Object.values(this.props.data).map((item, index) =>
-                        <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data, item.name)}>
+                        <ListItem key={index} button onClick={e => this.handleClick(e, index, item)}>
                             <ListItemIcon>
                                 {item.type === "file" ? <InsertDriveFileIcon /> : <FolderIcon />}
                             </ListItemIcon>
@@ -263,6 +333,13 @@ class Homescreen extends React.Component{
                     open={uploadFileOpen}
                     name="uploadFileOpen"
                     handleClose={this.handleClose}
+                    submit={this.handleFileImportSubmit}
+                />
+                <ShowDataModal 
+                    open={ShowDataOpen}
+                    handleClose={this.handleClose}
+                    name={"ShowDataOpen"}
+                    item={dataItem}
                 />
             </div>
         )
