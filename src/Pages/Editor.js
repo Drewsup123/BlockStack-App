@@ -36,7 +36,9 @@ const styles = {
 class FileEditor extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { text: this.props.text } // You can also pass a Quill Delta here
+        this.state = { 
+            text: this.props.text 
+        } // You can also pass a Quill Delta here
         this.handleChange = this.handleChange.bind(this);
     }
     

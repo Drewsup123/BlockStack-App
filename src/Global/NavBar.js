@@ -95,7 +95,7 @@ export default function PermanentDrawerLeft() {
                         </ListItemText>
                     </ListItem>
                 </Link>
-                <Link to="/editor" className={classes.link}>
+                {/* <Link to="/editor" className={classes.link}>
                     <ListItem button>
                         <ListItemIcon>
                             <HomeIcon size="small" />
@@ -104,7 +104,7 @@ export default function PermanentDrawerLeft() {
                             Editor (Delete Later)
                         </ListItemText>
                     </ListItem>
-                </Link>
+                </Link> */}
             </List>
         </Drawer>
         </div>

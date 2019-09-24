@@ -16,7 +16,7 @@ import AddContentModal from '../components/homescreen/AddContentModal';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import { UserSession } from 'blockstack';
 import { connect } from 'react-redux';
-import { updateText, updatePath, updateData } from '../Redux/actions';
+import { updateText, updatePath, updateData, downOneLevel, upOneLevel } from '../Redux/actions';
 
 const styles = {
     toolbar: {
@@ -131,7 +131,10 @@ class Homescreen extends React.Component{
             await this.props.updateText(data);
             this.props.history.push(`/editor/${this.state.history}`)
         }else{
-            this.props.history.push(`/files/${this.state.history + index}`)
+            this.props.downOneLevel(index)
+            setTimeout(() => {
+                this.props.upOneLevel();
+            }, 10000)
         }
     }
 
@@ -173,9 +176,9 @@ class Homescreen extends React.Component{
                 </Breadcrumbs>
                 <List>
                     {
-                    this.state.data 
+                    this.props.data 
                     ?
-                    Object.values(data).map((item, index) =>
+                    Object.values(this.props.data).map((item, index) =>
                         <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data)}>
                             <ListItemIcon>
                                 {item.type === "file" ? <InsertDriveFileIcon /> : <FolderIcon />}
@@ -186,6 +189,40 @@ class Homescreen extends React.Component{
                         </ListItem>
                     )
                     :<p>You Haven't Created any files yet</p>
+                    }
+                </List>
+
+                <List>
+                    {
+                    this.props.levels.length 
+                    ?
+                    this.props.levels[this.props.levels.length - 1].data.length 
+                        ?
+                        Object.values(this.props.levels[this.props.levels.length - 1].data).map((item, index) =>
+                            <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data)}>
+                                <ListItemIcon>
+                                    {item.type === "file" ? <InsertDriveFileIcon /> : <FolderIcon />}
+                                </ListItemIcon>
+                                <ListItemText>
+                                    {item.name}
+                                </ListItemText>
+                            </ListItem>
+                        ) 
+                        : <p>No Files in this folder</p>
+                    :
+                    this.props.data
+                        ?
+                        Object.values(this.props.data).map((item, index) =>
+                        <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data)}>
+                            <ListItemIcon>
+                                {item.type === "file" ? <InsertDriveFileIcon /> : <FolderIcon />}
+                            </ListItemIcon>
+                            <ListItemText>
+                                {item.name}
+                            </ListItemText>
+                        </ListItem>
+                        )
+                        :<p>You Haven't Created any files yet</p>
                     }
                 </List>
 
@@ -219,7 +256,8 @@ const mapStateToProps = state => {
         data : state.data,
         path : state.path,
         text : state.text,
+        levels : state.levels,
     }
 }
 const ws = withStyles(styles)(Homescreen)
-export default connect(mapStateToProps, { updateText, updateData, updatePath })(ws);
+export default connect(mapStateToProps, { updateText, updateData, updatePath, downOneLevel, upOneLevel })(ws);

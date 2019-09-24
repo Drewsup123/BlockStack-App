@@ -12,6 +12,14 @@ export const updateData = (payload) => dispatch => {
     dispatch({type: UPDATE_DATA, payload:payload})
 }
 
+export const downOneLevel = index => dispatch => {
+    dispatch({ type : DOWN_ONE_LEVEL, payload : index });
+}
+
+export const upOneLevel = () => dispatch => {
+    dispatch({ type : UP_ONE_LEVEL });
+}
+
 export const updatePath = payload => dispatch => {
     dispatch({type : UPDATE_PATH, payload : payload})
 }
