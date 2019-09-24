@@ -335,6 +335,9 @@ class Homescreen extends React.Component{
                             <ListItemText>
                                 {item.name}
                             </ListItemText>
+                            <ListItemIcon>
+                                <DeleteIcon onClick={e => this.deleteFile(e, index)} color="secondary"/>
+                            </ListItemIcon>
                         </ListItem>
                         )
                         :<p>You Haven't Created any files yet</p>
