@@ -6,6 +6,8 @@ import EditorToolbar from '../components/Toolbar';
 import SaveIcon from '@material-ui/icons/Save';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
+import { connect } from 'react-redux';
+import { updateText, updatePath, updateData } from '../Redux/actions';
 
 const styles = {
     container : {
@@ -47,7 +49,9 @@ class FileEditor extends React.Component {
         e.preventDefault();
         const path = this.props.match.params.path;
         console.log(path);
-        this.props.userSession.putFile(`/data/${path}`, JSON.stringify(this.state.text), {encrypt : false})
+        let final = {...this.props.data};
+        final[path].data = this.state.text;
+        this.props.userSession.putFile(`/data`, JSON.stringify(final), {encrypt : false})
     }
 
     modules = {
@@ -93,4 +97,12 @@ FileEditor.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(FileEditor);
+const mapStateToProps = state => {
+    return {
+        data : state.data,
+        path : state.path,
+        text : state.text,
+    }
+}
+const ws = withStyles(styles)(FileEditor)
+export default connect(mapStateToProps, { updateText, updateData, updatePath })(ws);

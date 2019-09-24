@@ -18,7 +18,7 @@ export default class App extends Component {
   constructor(){
     super();
     this.state = {
-      text : "",
+      userData : null,
     }
   }
 
@@ -41,11 +41,6 @@ export default class App extends Component {
     userSession.signUserOut(window.location.origin);
   }
 
-  setText = text => {
-    this.setState({ text : text });
-    console.log("updated text")
-  }
-
   render() {
     return (
       <div className="site-wrapper">
@@ -59,7 +54,7 @@ export default class App extends Component {
                   <Route path="/upload" render={() => <Upload /> } />
                   <Route path="/profile" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
                   <Route exact path="/" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
-                  <Route path="/editor/:path" render={(props) => <FileEditor userSession={userSession} text={this.state.text} {...props}/>} />
+                  <Route path="/editor/:path" render={(props) => <FileEditor userSession={userSession} {...props}/>} />
               </div>
             </div>
           }

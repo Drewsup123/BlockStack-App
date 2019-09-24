@@ -15,6 +15,8 @@ import PropTypes from 'prop-types';
 import AddContentModal from '../components/homescreen/AddContentModal';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import { UserSession } from 'blockstack';
+import { connect } from 'react-redux';
+import { updateText, updatePath, updateData } from '../Redux/actions';
 
 const styles = {
     toolbar: {
@@ -45,7 +47,9 @@ class Homescreen extends React.Component{
     componentDidMount(){
         this.userSession.getFile("/data", {decrypt : false}).then(fileContents => {
             console.log(fileContents);
-            this.setState({ data : JSON.parse(fileContents)});
+            const parsed = JSON.parse(fileContents);
+            this.setState({ data : parsed});
+            this.props.updateData(parsed);
         })
         // this.userSession.deleteFile("/data")
         // .then(() => {
@@ -124,7 +128,7 @@ class Homescreen extends React.Component{
         console.log(type, index);
         if(type === 'file'){
             await this.setState({ history : this.state.history + `${index}` })
-            await this.props.changeText(data);
+            await this.props.updateText(data);
             this.props.history.push(`/editor/${this.state.history}`)
         }else{
             this.props.history.push(`/files/${this.state.history + index}`)
@@ -210,4 +214,12 @@ Homescreen.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Homescreen)
+const mapStateToProps = state => {
+    return {
+        data : state.data,
+        path : state.path,
+        text : state.text,
+    }
+}
+const ws = withStyles(styles)(Homescreen)
+export default connect(mapStateToProps, { updateText, updateData, updatePath })(ws);
