@@ -32,7 +32,6 @@ class Homescreen extends React.Component{
     constructor(){
         super();
         this.state = {
-            data : {},
             newFolderOpen : false,
             newFileOpen : false,
             uploadFileOpen : false,
@@ -48,7 +47,6 @@ class Homescreen extends React.Component{
         this.userSession.getFile("/data", {decrypt : false}).then(fileContents => {
             console.log(fileContents);
             const parsed = JSON.parse(fileContents);
-            this.setState({ data : parsed});
             this.props.updateData(parsed);
         })
         // this.userSession.deleteFile("/data")
@@ -70,7 +68,8 @@ class Homescreen extends React.Component{
     }
 
     handleSubmit = async(name, type, toClose) => {
-        let data = this.state.data;
+        let data = this.props.data;
+        let path = this.props.path;
         if(type === "file"){
             // console.log("file");
             console.log(data);
@@ -88,36 +87,62 @@ class Homescreen extends React.Component{
                     this.setState({ data : object});
                 })
             }else{
-                console.log("type of data", typeof data)
-                const dataLength = Object.keys(data).length;
-                console.log("index", dataLength);
-                data[dataLength] = emptyFile;
-                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
-                    this.setState({ data : data });
-                })
+                if(path.length){
+                    console.log("this should be the folder", data[path[0]])
+                    let folder = data[path[0]];
+                    for(let i = 1; i < path.length; i++){
+                        folder = folder.data[i]
+                    }
+                    const folderLength = Object.keys(folder.data).length;
+                    folder.data[folderLength] = emptyFile;
+                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                        this.props.updateData(data);
+                    })
+                }else{
+                    console.log("type of data", typeof data)
+                    const dataLength = Object.keys(data).length;
+                    console.log("index", dataLength);
+                    data[dataLength] = emptyFile;
+                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                        this.props.updateData(data);
+                    })
+                }
             }
         }else{
             console.log("Folder")
             const newFolder = {
                 type : "folder",
                 name : name,
-                data : [],
+                data : {},
             }
             if(data === null){
                 const object = {
                     0 : newFolder,
                 }
                 this.userSession.putFile("/data", JSON.stringify(object), {encrypt : false}).then(() => {
-                    this.setState({ data : object});
+                    this.props.updateData(object);
                 })
             }else{
-                console.log("type of data", typeof data)
-                const dataLength = Object.keys(data).length;
-                console.log("index", dataLength);
-                data[dataLength] = newFolder;
-                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
-                    this.setState({ data : data });
-                })
+                if(path.length){
+                    console.log("this should be the folder", data[path[0]])
+                    let folder = data[path[0]];
+                    for(let i = 1; i < path.length; i++){
+                        folder = folder.data[i]
+                    }
+                    const folderLength = Object.keys(folder.data).length;
+                    folder.data[folderLength] = newFolder;
+                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                        this.props.updateData(data);
+                    })
+                }else{
+                    console.log("type of data", typeof data)
+                    const dataLength = Object.keys(data).length;
+                    console.log("index", dataLength);
+                    data[dataLength] = newFolder;
+                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                        this.props.updateData(data);
+                    })
+                }
             }
         }
         this.setState({ [toClose] : false })
@@ -132,9 +157,6 @@ class Homescreen extends React.Component{
             this.props.history.push(`/editor/${this.state.history}`)
         }else{
             this.props.downOneLevel(index)
-            setTimeout(() => {
-                this.props.upOneLevel();
-            }, 10000)
         }
     }
 
@@ -172,9 +194,15 @@ class Homescreen extends React.Component{
                     </List>
                 </Toolbar>
                 <Breadcrumbs aria-label="breadcrumb">
-
+                    <p>root</p>
+                    {
+                        this.props.path.length 
+                        ? this.props.path.map(value => <p>{value}</p>)
+                        : null
+                    }
+                    <button onClick={() => this.props.upOneLevel()}>Up a level</button>
                 </Breadcrumbs>
-                <List>
+                {/* <List>
                     {
                     this.props.data 
                     ?
@@ -190,13 +218,13 @@ class Homescreen extends React.Component{
                     )
                     :<p>You Haven't Created any files yet</p>
                     }
-                </List>
+                </List> */}
 
                 <List>
                     {
                     this.props.levels.length 
                     ?
-                    this.props.levels[this.props.levels.length - 1].data.length 
+                    this.props.levels[this.props.levels.length - 1].data
                         ?
                         Object.values(this.props.levels[this.props.levels.length - 1].data).map((item, index) =>
                             <ListItem key={index} button onClick={e => this.handleClick(e, item.type, index, item.data)}>
