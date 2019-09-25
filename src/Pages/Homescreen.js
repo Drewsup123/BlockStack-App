@@ -79,13 +79,15 @@ class Homescreen extends React.Component{
 
     deleteAllData = e => {
         e.preventDefault();
-        this.userSession.deleteFile("/data")
-        .then(() => {
-            console.log("removed")
-            this.props.updateData({});
-        }).catch(err => {
-            alert("Error deleting data")
-        })
+        if(window.confirm("Are you sure you want to delete all your data?")){
+            this.userSession.deleteFile("/data")
+            .then(() => {
+                console.log("removed")
+                this.props.updateData({});
+            }).catch(err => {
+                alert("Error deleting data")
+            })
+        }
     }
 
     handleClose = name => {
@@ -242,24 +244,26 @@ class Homescreen extends React.Component{
     deleteFile = (e, index) => {
         e.preventDefault();
         e.stopPropagation();
-        let data = this.props.data;
-        let path = this.props.path;
-        if(path.length){
-            console.log("this should be the folder", data[path[0]])
-            let folder = data[path[0]];
-            for(let i = 1; i < path.length; i++){
-                folder = folder.data[path[i]]
+        if(window.confirm("Are you sure you want to delete this file?")){
+            let data = this.props.data;
+            let path = this.props.path;
+            if(path.length){
+                console.log("this should be the folder", data[path[0]])
+                let folder = data[path[0]];
+                for(let i = 1; i < path.length; i++){
+                    folder = folder.data[path[i]]
+                }
+                delete folder.data[index]
+                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                    this.props.updateData(data);
+                })
+            }else{
+                console.log("type of data", typeof data)
+                delete data[index]
+                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                    this.props.updateData(data);
+                })
             }
-            delete folder.data[index]
-            this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
-                this.props.updateData(data);
-            })
-        }else{
-            console.log("type of data", typeof data)
-            delete data[index]
-            this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
-                this.props.updateData(data);
-            })
         }
     }
 
