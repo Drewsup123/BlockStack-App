@@ -2,7 +2,6 @@ import React from 'react';
 import Toolbar from '@material-ui/core/Toolbar';
 import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
@@ -61,7 +60,7 @@ class Homescreen extends React.Component{
     userSession = new UserSession();
 
     componentDidMount(){
-        this.userSession.getFile("/data", {decrypt : false}).then(fileContents => {
+        this.userSession.getFile("/data", {decrypt : true}).then(fileContents => {
             console.log(fileContents);
             const parsed = JSON.parse(fileContents);
             this.props.updateData(parsed);
@@ -73,9 +72,9 @@ class Homescreen extends React.Component{
         // })
     }
 
-    componentDidUpdate(){
-        console.log(this.state)
-    }
+    // componentDidUpdate(){
+    //     console.log(this.state)
+    // }
 
     deleteAllData = e => {
         e.preventDefault();
@@ -114,7 +113,7 @@ class Homescreen extends React.Component{
                 const object = {
                     0 : emptyFile
                 }
-                this.userSession.putFile("/data", JSON.stringify(object), {encrypt : false}).then(() => {
+                this.userSession.putFile("/data", JSON.stringify(object), {encrypt : true}).then(() => {
                     this.props.updateData(object);
                 })
             }else{
@@ -126,7 +125,7 @@ class Homescreen extends React.Component{
                     }
                     const folderLength = Object.keys(folder.data).length;
                     folder.data[folderLength] = emptyFile;
-                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                         this.props.updateData(data);
                     })
                 }else{
@@ -134,7 +133,7 @@ class Homescreen extends React.Component{
                     const dataLength = Object.keys(data).length;
                     console.log("index", dataLength);
                     data[dataLength] = emptyFile;
-                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                         this.props.updateData(data);
                     })
                 }
@@ -150,7 +149,7 @@ class Homescreen extends React.Component{
                 const object = {
                     0 : newFolder,
                 }
-                this.userSession.putFile("/data", JSON.stringify(object), {encrypt : false}).then(() => {
+                this.userSession.putFile("/data", JSON.stringify(object), {encrypt : true}).then(() => {
                     this.props.updateData(object);
                 })
             }else{
@@ -162,7 +161,7 @@ class Homescreen extends React.Component{
                     }
                     const folderLength = Object.keys(folder.data).length;
                     folder.data[folderLength] = newFolder;
-                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                         this.props.updateData(data);
                     })
                 }else{
@@ -170,7 +169,7 @@ class Homescreen extends React.Component{
                     const dataLength = Object.keys(data).length;
                     console.log("index", dataLength);
                     data[dataLength] = newFolder;
-                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                    this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                         this.props.updateData(data);
                     })
                 }
@@ -211,7 +210,7 @@ class Homescreen extends React.Component{
             const object = {
                 0 : emptyFile
             }
-            this.userSession.putFile("/data", JSON.stringify(object), {encrypt : false}).then(() => {
+            this.userSession.putFile("/data", JSON.stringify(object), {encrypt : true}).then(() => {
                 this.props.updateData(object);
                 this.setState({ uploadFileOpen : false})
             })
@@ -224,7 +223,7 @@ class Homescreen extends React.Component{
                 }
                 const folderLength = Object.keys(folder.data).length;
                 folder.data[folderLength] = emptyFile;
-                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                     this.props.updateData(data);
                     this.setState({ uploadFileOpen : false})
                 })
@@ -233,7 +232,7 @@ class Homescreen extends React.Component{
                 const dataLength = Object.keys(data).length;
                 console.log("index", dataLength);
                 data[dataLength] = emptyFile;
-                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                     this.props.updateData(data);
                     this.setState({ uploadFileOpen : false})
                 })
@@ -254,13 +253,13 @@ class Homescreen extends React.Component{
                     folder = folder.data[path[i]]
                 }
                 delete folder.data[index]
-                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                     this.props.updateData(data);
                 })
             }else{
                 console.log("type of data", typeof data)
                 delete data[index]
-                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+                this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                     this.props.updateData(data);
                 })
             }
@@ -279,14 +278,14 @@ class Homescreen extends React.Component{
                 folder = folder.data[path[i]]
             }
             folder.data[index].name = name;
-            this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+            this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                 this.props.updateData(data);
                 this.setState({ editTitleOpen : false});
             })
         }else{
             console.log("type of data", typeof data)
             data[index].name = name
-            this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
+            this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                 this.props.updateData(data);
                 this.setState({ editTitleOpen : false});
             })
@@ -300,7 +299,7 @@ class Homescreen extends React.Component{
 
     render(){
         const {classes} = this.props;
-        const { data, newFileOpen, newFolderOpen, uploadFileOpen, ShowDataOpen, dataItem, editTitleOpen } = this.state;
+        const { newFileOpen, newFolderOpen, uploadFileOpen, ShowDataOpen, dataItem, editTitleOpen } = this.state;
         return(
             <div className={classes.root}>
                 <Toolbar className={classes.toolbar}>

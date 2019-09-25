@@ -12,8 +12,8 @@ export default function ShowDataModal(props){
             <DialogContent>
                 {
                     props.item && props.item.data && (props.item.fileType === "image/png" || props.item.fileType === "image/jpg")
-                    ? <img style={{maxWidth : "100%"}} src={props.item ? props.item.data : ""} />
-                    : <iframe style={{width : "100%", height : "95%"}} src={props.item ? props.item.data : ""} />
+                    ? <img alt="Your File" style={{maxWidth : "100%"}} src={props.item ? props.item.data : ""} />
+                    : <iframe title={props.item ? props.item.name : ""} style={{width : "100%", height : "95%"}} src={props.item ? props.item.data : ""} />
                 }
             </DialogContent>
             <DialogActions>

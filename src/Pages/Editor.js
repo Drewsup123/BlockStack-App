@@ -2,7 +2,7 @@ import React from 'react';
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import { withStyles } from '@material-ui/styles';
-import EditorToolbar from '../components/Toolbar';
+// import EditorToolbar from '../components/Toolbar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SaveIcon from '@material-ui/icons/Save';
 import PropTypes from 'prop-types';
@@ -63,7 +63,7 @@ class FileEditor extends React.Component {
             console.log("folder it is changing!!!!", folder)
             folder.data[this.props.index].data = this.state.text;
             this.props.updateData(data);
-            this.props.userSession.putFile(`/data`, JSON.stringify(data), {encrypt : false}).then(() => {
+            this.props.userSession.putFile(`/data`, JSON.stringify(data), {encrypt : true}).then(() => {
                 this.setState({ saving : false, showSaveMessage : "Saved Successfully" });
                 setTimeout(() => {
                     this.setState({ showSaveMessage : ""})
@@ -80,7 +80,7 @@ class FileEditor extends React.Component {
             console.log(path);
             let final = {...this.props.data};
             final[path].data = this.state.text;
-            this.props.userSession.putFile(`/data`, JSON.stringify(final), {encrypt : false}).then(() => {
+            this.props.userSession.putFile(`/data`, JSON.stringify(final), {encrypt : true}).then(() => {
                 this.setState({ saving : false, showSaveMessage : "Saved Successfully" })
                 setTimeout(() => {
                     this.setState({ showSaveMessage : ""})
