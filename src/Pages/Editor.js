@@ -3,6 +3,7 @@ import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import { withStyles } from '@material-ui/styles';
 import EditorToolbar from '../components/Toolbar';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import SaveIcon from '@material-ui/icons/Save';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
@@ -37,7 +38,9 @@ class FileEditor extends React.Component {
     constructor(props) {
         super(props)
         this.state = { 
-            text: this.props.text 
+            text: this.props.text,
+            saving : false,
+            showSaveMessage : "",
         } // You can also pass a Quill Delta here
         this.handleChange = this.handleChange.bind(this);
     }
@@ -49,6 +52,7 @@ class FileEditor extends React.Component {
 
     handleSaveChanges = e => {
         e.preventDefault();
+        this.setState({ saving : true })
         if(this.props.path.length){
             const data = {...this.props.data};
             const path = [...this.props.path]
@@ -59,13 +63,35 @@ class FileEditor extends React.Component {
             console.log("folder it is changing!!!!", folder)
             folder.data[this.props.index].data = this.state.text;
             this.props.updateData(data);
-            this.props.userSession.putFile(`/data`, JSON.stringify(data), {encrypt : false})
+            this.props.userSession.putFile(`/data`, JSON.stringify(data), {encrypt : false}).then(() => {
+                this.setState({ saving : false, showSaveMessage : "Saved Successfully" });
+                setTimeout(() => {
+                    this.setState({ showSaveMessage : ""})
+                }, 2000)
+            }).catch(err => {
+                console.log(err);
+                this.setState({ showSaveMessage : "Error Saving file"})
+                setTimeout(() => {
+                    this.setState({ showSaveMessage : ""})
+                }, 2000)
+            })
         }else{
             const path = this.props.match.params.path;
             console.log(path);
             let final = {...this.props.data};
             final[path].data = this.state.text;
-            this.props.userSession.putFile(`/data`, JSON.stringify(final), {encrypt : false})
+            this.props.userSession.putFile(`/data`, JSON.stringify(final), {encrypt : false}).then(() => {
+                this.setState({ saving : false, showSaveMessage : "Saved Successfully" })
+                setTimeout(() => {
+                    this.setState({ showSaveMessage : ""})
+                }, 2000)
+            }).catch(err => {
+                console.log(err);
+                this.setState({ showSaveMessage : "Error Saving file"})
+                setTimeout(() => {
+                    this.setState({ showSaveMessage : ""})
+                }, 2000)
+            })
         }
     }
 
@@ -95,7 +121,12 @@ class FileEditor extends React.Component {
         return (
             <Paper className={classes.paper}>
                 {/* <EditorToolbar /> */}
-                <SaveIcon onClick={this.handleSaveChanges} />
+                {this.state.saving 
+                    ? <CircularProgress /> 
+                    : this.state.showSaveMessage 
+                        ? <p>{this.state.showSaveMessage}</p>
+                        :<SaveIcon onClick={this.handleSaveChanges} />
+                }
                 <ReactQuill 
                     style={{height : "100%"}}
                     value={this.state.text}
