@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import { connect } from 'react-redux';
 import { updateText, updatePath, updateData } from '../Redux/actions';
+import moment from 'moment';
 
 const styles = {
     container : {
@@ -32,6 +33,12 @@ const styles = {
         justifyContent : "space-between",
         height : "10vh"
     },
+    saveSection : {
+        display : "flex",
+        width : "100%",
+        justifyContent : "center",
+        alignItems : "center",
+    }
 }
 
 class FileEditor extends React.Component {
@@ -41,6 +48,9 @@ class FileEditor extends React.Component {
             text: this.props.text,
             saving : false,
             showSaveMessage : "",
+            lastSaved : 0,
+            interval : null,
+            timeAgoSaved : "",
         } // You can also pass a Quill Delta here
         this.handleChange = this.handleChange.bind(this);
     }
@@ -64,9 +74,9 @@ class FileEditor extends React.Component {
             folder.data[this.props.index].data = this.state.text;
             this.props.updateData(data);
             this.props.userSession.putFile(`/data`, JSON.stringify(data), {encrypt : true}).then(() => {
-                this.setState({ saving : false, showSaveMessage : "Saved Successfully" });
+                this.setState({ saving : false, showSaveMessage : "Saved Successfully", lastSaved : moment().format('h:mm:ss a') });
                 setTimeout(() => {
-                    this.setState({ showSaveMessage : ""})
+                    this.setState({ showSaveMessage : "" })
                 }, 2000)
             }).catch(err => {
                 console.log(err);
@@ -81,7 +91,7 @@ class FileEditor extends React.Component {
             let final = {...this.props.data};
             final[path].data = this.state.text;
             this.props.userSession.putFile(`/data`, JSON.stringify(final), {encrypt : true}).then(() => {
-                this.setState({ saving : false, showSaveMessage : "Saved Successfully" })
+                this.setState({ saving : false, showSaveMessage : "Saved Successfully", lastSaved : moment().format('h:mm:ss a') })
                 setTimeout(() => {
                     this.setState({ showSaveMessage : ""})
                 }, 2000)
@@ -102,6 +112,20 @@ class FileEditor extends React.Component {
             this.props.history.push("/files")
         }
     }
+
+    // timeFromNow = () => {
+    //     // this.setState({ timeAgoSaved : moment().startOf(this.state.lastSaved).fromNow() });
+    //     let interval = setInterval(() => {
+    //         console.log("time from now being called", moment().startOf(this.state.lastSaved).fromNow(), this.state.lastSaved)
+    //         this.setState({ timeAgoSaved : moment().startOf(this.state.lastSaved).fromNow() });
+    //     }, 3000)
+    //     this.setState({ interval })
+    // }
+
+    // componentWillUnmount(){
+    //     // use intervalId from the state to clear the interval
+    //     clearInterval(this.state.interval);
+    // }
 
     modules = {
         toolbar: [
@@ -129,12 +153,15 @@ class FileEditor extends React.Component {
         return (
             <Paper className={classes.paper}>
                 {/* <EditorToolbar /> */}
-                {this.state.saving 
-                    ? <CircularProgress /> 
-                    : this.state.showSaveMessage 
-                        ? <p>{this.state.showSaveMessage}</p>
-                        :<SaveIcon color="primary" onClick={this.handleSaveChanges} />
-                }
+                <div className={classes.saveSection}>
+                    {this.state.saving 
+                        ? <CircularProgress color="primary"/> 
+                        : this.state.showSaveMessage 
+                            ? <p>{this.state.showSaveMessage}</p>
+                            :<SaveIcon color="primary" onClick={this.handleSaveChanges} />
+                    }
+                    <p> Last Saved {this.state.lastSaved ? this.state.lastSaved : ""}</p>
+                </div>
                 <ReactQuill 
                     style={{height : "100%"}}
                     value={this.state.text}
