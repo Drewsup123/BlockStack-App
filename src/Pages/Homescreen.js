@@ -7,6 +7,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import NoteAddIcon from '@material-ui/icons/NoteAdd';
+import EditIcon from '@material-ui/icons/Edit';
 import ListItemText from '@material-ui/core/ListItemText';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import FolderIcon from '@material-ui/icons/Folder';
@@ -15,6 +16,7 @@ import PropTypes from 'prop-types';
 import AddContentModal from '../components/homescreen/AddContentModal';
 import ImportFileModal from '../components/homescreen/ImportFileModal';
 import ShowDataModal from '../components/homescreen/ShowDataModal';
+import EditTitleModal from '../components/homescreen/EditTitleModal';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -46,10 +48,12 @@ class Homescreen extends React.Component{
             newFileOpen : false,
             uploadFileOpen : false,
             ShowDataOpen : false,
+            editTitleOpen : false,
             userSession : null,
             history : "",
             fileHistory : [],
             dataItem : null,
+            titleIndex : null,
         }
     }
 
@@ -283,19 +287,26 @@ class Homescreen extends React.Component{
             folder.data[index].name = name;
             this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
                 this.props.updateData(data);
+                this.setState({ editTitleOpen : false});
             })
         }else{
             console.log("type of data", typeof data)
             data[index].name = name
             this.userSession.putFile("/data", JSON.stringify(data), {encrypt : false}).then(() => {
                 this.props.updateData(data);
+                this.setState({ editTitleOpen : false});
             })
         }
     }
 
+    handleEditOpen = (e, index) => {
+        e.stopPropagation();
+        this.setState({ titleIndex : index, editTitleOpen : true });
+    }
+
     render(){
         const {classes} = this.props;
-        const { data, newFileOpen, newFolderOpen, uploadFileOpen, ShowDataOpen, dataItem } = this.state;
+        const { data, newFileOpen, newFolderOpen, uploadFileOpen, ShowDataOpen, dataItem, editTitleOpen } = this.state;
         return(
             <div className={classes.root}>
                 <Toolbar className={classes.toolbar}>
@@ -362,6 +373,7 @@ class Homescreen extends React.Component{
                                 </ListItemText>
                                 <ListItemIcon>
                                     <DeleteIcon onClick={e => this.deleteFile(e, index)} color="secondary"/>
+                                    <EditIcon onClick={e => this.handleEditOpen(e, index)}/>
                                 </ListItemIcon>
                             </ListItem>
                         ) 
@@ -379,6 +391,7 @@ class Homescreen extends React.Component{
                             </ListItemText>
                             <ListItemIcon>
                                 <DeleteIcon onClick={e => this.deleteFile(e, index)} color="secondary"/>
+                                <EditIcon onClick={e => this.handleEditOpen(e, index)}/>
                             </ListItemIcon>
                         </ListItem>
                         )
@@ -413,6 +426,12 @@ class Homescreen extends React.Component{
                     handleClose={this.handleClose}
                     name={"ShowDataOpen"}
                     item={dataItem}
+                />
+                <EditTitleModal 
+                    open={editTitleOpen}
+                    handleClose={this.handleClose}
+                    submitHandler={this.editFileName}
+                    titleIndex={this.state.titleIndex}
                 />
             </div>
         )

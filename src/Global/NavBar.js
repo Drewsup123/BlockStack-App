@@ -96,7 +96,7 @@ export default function PermanentDrawerLeft() {
                         </ListItemText>
                     </ListItem>
                 </Link>
-                <a style={{color : "black", textDecoration : "none"}}href="https://forms.gle/3Aghwd6aUs6E7Q769" target="_blank">
+                <a style={{color : "black", textDecoration : "none"}}href="https://forms.gle/3Aghwd6aUs6E7Q769" target="_blank" rel="noopener noreferrer">
                     <ListItem button>
                         <ListItemIcon>
                             <FeedbackIcon size="small" />
