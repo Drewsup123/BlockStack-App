@@ -368,6 +368,8 @@ class Homescreen extends React.Component{
                                 </ListItemText>
                                 <ListItemIcon>
                                     <DeleteIcon onClick={e => this.deleteFile(e, index)} color="secondary"/>
+                                </ListItemIcon>
+                                <ListItemIcon>
                                     <EditIcon color="primary" onClick={e => this.handleEditOpen(e, index)}/>
                                 </ListItemIcon>
                             </ListItem>
@@ -386,6 +388,8 @@ class Homescreen extends React.Component{
                             </ListItemText>
                             <ListItemIcon>
                                 <DeleteIcon onClick={e => this.deleteFile(e, index)} color="secondary"/>
+                            </ListItemIcon>
+                            <ListItemIcon>
                                 <EditIcon color="primary" onClick={e => this.handleEditOpen(e, index)}/>
                             </ListItemIcon>
                         </ListItem>
