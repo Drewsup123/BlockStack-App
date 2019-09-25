@@ -95,6 +95,14 @@ class FileEditor extends React.Component {
         }
     }
 
+    componentDidMount(){
+        console.log("component did mount")
+        console.log(Object.keys(this.props.data))
+        if(!Object.keys(this.props.data).length){
+            this.props.history.push("/files")
+        }
+    }
+
     modules = {
         toolbar: [
             [{ 'font': [] }, {'color' : []}],
@@ -125,7 +133,7 @@ class FileEditor extends React.Component {
                     ? <CircularProgress /> 
                     : this.state.showSaveMessage 
                         ? <p>{this.state.showSaveMessage}</p>
-                        :<SaveIcon onClick={this.handleSaveChanges} />
+                        :<SaveIcon color="primary" onClick={this.handleSaveChanges} />
                 }
                 <ReactQuill 
                     style={{height : "100%"}}
