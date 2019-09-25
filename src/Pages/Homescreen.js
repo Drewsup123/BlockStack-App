@@ -44,6 +44,7 @@ class Homescreen extends React.Component{
     constructor(){
         super();
         this.state = {
+            loading : true,
             newFolderOpen : false,
             newFileOpen : false,
             uploadFileOpen : false,
@@ -64,6 +65,7 @@ class Homescreen extends React.Component{
             console.log(fileContents);
             const parsed = JSON.parse(fileContents);
             this.props.updateData(parsed);
+            this.setState({ loading : false})
         })
         // this.userSession.deleteFile("/data")
         // .then(() => {
@@ -80,6 +82,7 @@ class Homescreen extends React.Component{
         this.userSession.deleteFile("/data")
         .then(() => {
             console.log("removed")
+            this.props.updateData({});
         }).catch(err => {
             alert("Error deleting data")
         })
@@ -173,19 +176,6 @@ class Homescreen extends React.Component{
         }
         this.setState({ [toClose] : false })
     }
-
-    // handleClick = async(e, type, index, data, name) => {
-    //     e.preventDefault();
-    //     console.log(type, index, name);
-    //     if(type === 'file'){
-    //         await this.setState({ history : this.state.history + `${index}` })
-    //         await this.props.updateText(data);
-    //         this.props.updateFileIndex(index);
-    //         this.props.history.push(`/editor/${this.state.history}`)
-    //     }else{
-    //         this.props.downOneLevel(index, name)
-    //     }
-    // }
 
     handleClick = async(e, index, item) => {
         e.preventDefault();
@@ -356,7 +346,9 @@ class Homescreen extends React.Component{
                         <ArrowBackIcon />
                     </IconButton>
                 </Breadcrumbs>
-
+                {this.state.loading 
+                ? <p>Loading Files...</p> 
+                : 
                 <List>
                     {
                     this.props.levels.length 
@@ -373,7 +365,7 @@ class Homescreen extends React.Component{
                                 </ListItemText>
                                 <ListItemIcon>
                                     <DeleteIcon onClick={e => this.deleteFile(e, index)} color="secondary"/>
-                                    <EditIcon onClick={e => this.handleEditOpen(e, index)}/>
+                                    <EditIcon color="primary" onClick={e => this.handleEditOpen(e, index)}/>
                                 </ListItemIcon>
                             </ListItem>
                         ) 
@@ -391,13 +383,14 @@ class Homescreen extends React.Component{
                             </ListItemText>
                             <ListItemIcon>
                                 <DeleteIcon onClick={e => this.deleteFile(e, index)} color="secondary"/>
-                                <EditIcon onClick={e => this.handleEditOpen(e, index)}/>
+                                <EditIcon color="primary" onClick={e => this.handleEditOpen(e, index)}/>
                             </ListItemIcon>
                         </ListItem>
                         )
                         :<p>You Haven't Created any files yet</p>
                     }
                 </List>
+                }
 
                 <AddContentModal 
                     name="newFolderOpen" 

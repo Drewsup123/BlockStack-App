@@ -17,6 +17,7 @@ export default class EditTitleModal extends React.Component{
 
     submit = e => {
         this.props.submitHandler(e, this.props.titleIndex, this.state.title)
+        this.setState({ title : "" });
     }
 
     onChange = e => {
