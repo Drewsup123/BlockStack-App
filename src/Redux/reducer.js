@@ -7,6 +7,7 @@ const initialState = {
     text : "",
     levels : [],
     fileIndex : null,
+    code : ``,
 }
 
 export const reducer = (state = initialState, action) => {

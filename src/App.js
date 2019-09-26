@@ -4,6 +4,7 @@ import Signin from './Signin.js';
 import Homescreen from './Pages/Homescreen';
 import NavBar from './Global/NavBar';
 import FileEditor from './Pages/Editor';
+import CodeEditor from './Pages/CodeEditor';
 import { Route } from 'react-router-dom';
 import {
   UserSession,
@@ -53,6 +54,7 @@ export default class App extends Component {
                   <Route path="/profile" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
                   <Route exact path="/" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
                   <Route path="/editor/:path" render={(props) => <FileEditor userSession={userSession} {...props}/>} />
+                  <Route path="/code-editor" render={() => <CodeEditor />} />
               </div>
             </div>
           }
