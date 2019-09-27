@@ -54,7 +54,7 @@ export default class App extends Component {
                   <Route path="/profile" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
                   <Route exact path="/" render={() => <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />} />
                   <Route path="/editor/:path" render={(props) => <FileEditor userSession={userSession} {...props}/>} />
-                  <Route path="/code-editor" render={() => <CodeEditor />} />
+                  <Route path="/code-editor/:path" render={(props) => <CodeEditor {...props} userSession={userSession}/>} />
               </div>
             </div>
           }

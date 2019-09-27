@@ -10,19 +10,24 @@ import EditIcon from '@material-ui/icons/Edit';
 import ListItemText from '@material-ui/core/ListItemText';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import FolderIcon from '@material-ui/icons/Folder';
+import CodeIcon from '@material-ui/icons/Code';
+import ImageIcon from '@material-ui/icons/Image';
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import { withStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
 import AddContentModal from '../components/homescreen/AddContentModal';
 import ImportFileModal from '../components/homescreen/ImportFileModal';
 import ShowDataModal from '../components/homescreen/ShowDataModal';
 import EditTitleModal from '../components/homescreen/EditTitleModal';
+import CreateCodeFileModal from '../components/homescreen/CreateCodeFileModal';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { UserSession } from 'blockstack';
 import { connect } from 'react-redux';
-import { updateText, updatePath, updateData, downOneLevel, upOneLevel, updateFileIndex } from '../Redux/actions';
+import createUID from '../functions';
+import { updateText, updatePath, updateData, downOneLevel, upOneLevel, updateFileIndex, updateCode } from '../Redux/actions';
 
 const styles = {
     root: {
@@ -49,6 +54,7 @@ class Homescreen extends React.Component{
             uploadFileOpen : false,
             ShowDataOpen : false,
             editTitleOpen : false,
+            newCodeFileOpen : false,
             userSession : null,
             history : "",
             fileHistory : [],
@@ -97,21 +103,23 @@ class Homescreen extends React.Component{
         this.setState({ [name] : true })
     }
 
-    handleSubmit = async(name, type, toClose) => {
+    handleSubmit = async(name, type, toClose, fileType = "doc") => {
         let data = this.props.data;
         let path = this.props.path;
+        const ID = createUID();
         if(type === "file"){
             // console.log("file");
             console.log(data);
             const emptyFile = {
                 type : "file",
-                fileType : "doc",
+                fileType : fileType,
                 name : name,
-                data : <p>testing</p>,
+                key : ID,
+                data : ``,
             };
             if(data === null){
                 const object = {
-                    0 : emptyFile
+                    [ID] : emptyFile
                 }
                 this.userSession.putFile("/data", JSON.stringify(object), {encrypt : true}).then(() => {
                     this.props.updateData(object);
@@ -123,16 +131,13 @@ class Homescreen extends React.Component{
                     for(let i = 1; i < path.length; i++){
                         folder = folder.data[path[i]]
                     }
-                    const folderLength = Object.keys(folder.data).length;
-                    folder.data[folderLength] = emptyFile;
+                    folder.data[ID] = emptyFile;
                     this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                         this.props.updateData(data);
                     })
                 }else{
                     console.log("type of data", typeof data)
-                    const dataLength = Object.keys(data).length;
-                    console.log("index", dataLength);
-                    data[dataLength] = emptyFile;
+                    data[ID] = emptyFile;
                     this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                         this.props.updateData(data);
                     })
@@ -143,11 +148,12 @@ class Homescreen extends React.Component{
             const newFolder = {
                 type : "folder",
                 name : name,
+                key : ID,
                 data : {},
             }
             if(data === null){
                 const object = {
-                    0 : newFolder,
+                    [ID] : newFolder,
                 }
                 this.userSession.putFile("/data", JSON.stringify(object), {encrypt : true}).then(() => {
                     this.props.updateData(object);
@@ -159,16 +165,13 @@ class Homescreen extends React.Component{
                     for(let i = 1; i < path.length; i++){
                         folder = folder.data[path[i]]
                     }
-                    const folderLength = Object.keys(folder.data).length;
-                    folder.data[folderLength] = newFolder;
+                    folder.data[ID] = newFolder;
                     this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                         this.props.updateData(data);
                     })
                 }else{
                     console.log("type of data", typeof data)
-                    const dataLength = Object.keys(data).length;
-                    console.log("index", dataLength);
-                    data[dataLength] = newFolder;
+                    data[ID] = newFolder;
                     this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                         this.props.updateData(data);
                     })
@@ -178,37 +181,47 @@ class Homescreen extends React.Component{
         this.setState({ [toClose] : false })
     }
 
-    handleClick = async(e, index, item) => {
+    handleClick = async(e, item) => {
         e.preventDefault();
-        const {type, name, fileType, data } = item;
+        const {type, name, fileType, data, key } = item;
         console.log(item);
         if(type === 'file'){
             if(fileType === "image/png" || fileType === "image/jpg" || fileType === "application/pdf"){
                 console.log("this is an image")
                 this.setState({ dataItem : item, ShowDataOpen : true})
-            }else{
-                await this.setState({ history : this.state.history + `${index}` })
+            }
+            else if(fileType === "javascript"){
+                console.log(" this is a code file ");
+                await this.setState({ history : this.state.history + `${key}` })
+                await this.props.updateCode(data);
+                await this.props.updateFileIndex(key);
+                this.props.history.push(`/code-editor/${this.state.history}`);
+            }
+            else{
+                await this.setState({ history : this.state.history + `${key}` })
                 await this.props.updateText(data);
-                this.props.updateFileIndex(index);
+                this.props.updateFileIndex(key);
                 this.props.history.push(`/editor/${this.state.history}`)
             }
         }else{
-            this.props.downOneLevel(index, name)
+            this.props.downOneLevel(key, name)
         }
     }
 
     handleFileImportSubmit = (name, type, base64) => {
         let data = this.props.data;
         let path = this.props.path;
+        const ID = createUID();
         const emptyFile = {
             type : "file",
             fileType : type,
+            key : ID,
             name : name,
             data : base64,
         };
         if(data === null){
             const object = {
-                0 : emptyFile
+                [ID] : emptyFile
             }
             this.userSession.putFile("/data", JSON.stringify(object), {encrypt : true}).then(() => {
                 this.props.updateData(object);
@@ -221,17 +234,14 @@ class Homescreen extends React.Component{
                 for(let i = 1; i < path.length; i++){
                     folder = folder.data[path[i]]
                 }
-                const folderLength = Object.keys(folder.data).length;
-                folder.data[folderLength] = emptyFile;
+                folder.data[ID] = emptyFile;
                 this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                     this.props.updateData(data);
                     this.setState({ uploadFileOpen : false})
                 })
             }else{
                 console.log("type of data", typeof data)
-                const dataLength = Object.keys(data).length;
-                console.log("index", dataLength);
-                data[dataLength] = emptyFile;
+                data[ID] = emptyFile;
                 this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                     this.props.updateData(data);
                     this.setState({ uploadFileOpen : false})
@@ -240,7 +250,7 @@ class Homescreen extends React.Component{
         }
     }
 
-    deleteFile = (e, index) => {
+    deleteFile = (e, key) => {
         e.preventDefault();
         e.stopPropagation();
         if(window.confirm("Are you sure you want to delete this file?")){
@@ -252,13 +262,13 @@ class Homescreen extends React.Component{
                 for(let i = 1; i < path.length; i++){
                     folder = folder.data[path[i]]
                 }
-                delete folder.data[index]
+                delete folder.data[key]
                 this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                     this.props.updateData(data);
                 })
             }else{
                 console.log("type of data", typeof data)
-                delete data[index]
+                delete data[key]
                 this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                     this.props.updateData(data);
                 })
@@ -266,7 +276,7 @@ class Homescreen extends React.Component{
         }
     }
 
-    editFileName = (e, index, name) => {
+    editFileName = (e, key, name) => {
         e.preventDefault();
         e.stopPropagation();
         let data = this.props.data;
@@ -277,14 +287,14 @@ class Homescreen extends React.Component{
             for(let i = 1; i < path.length; i++){
                 folder = folder.data[path[i]]
             }
-            folder.data[index].name = name;
+            folder.data[key].name = name;
             this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                 this.props.updateData(data);
                 this.setState({ editTitleOpen : false});
             })
         }else{
             console.log("type of data", typeof data)
-            data[index].name = name
+            data[key].name = name
             this.userSession.putFile("/data", JSON.stringify(data), {encrypt : true}).then(() => {
                 this.props.updateData(data);
                 this.setState({ editTitleOpen : false});
@@ -292,14 +302,14 @@ class Homescreen extends React.Component{
         }
     }
 
-    handleEditOpen = (e, index) => {
+    handleEditOpen = (e, key) => {
         e.stopPropagation();
-        this.setState({ titleIndex : index, editTitleOpen : true });
+        this.setState({ titleIndex : key, editTitleOpen : true });
     }
 
     render(){
         const {classes} = this.props;
-        const { newFileOpen, newFolderOpen, uploadFileOpen, ShowDataOpen, dataItem, editTitleOpen } = this.state;
+        const { newFileOpen, newFolderOpen, uploadFileOpen, ShowDataOpen, dataItem, editTitleOpen, newCodeFileOpen } = this.state;
         return(
             <div className={classes.root}>
                 <Toolbar className={classes.toolbar}>
@@ -328,6 +338,14 @@ class Homescreen extends React.Component{
                                 Create File
                             </ListItemText>
                         </ListItem>
+                        <ListItem button onClick={() => this.handleOpen("newCodeFileOpen")}>
+                            <ListItemIcon>
+                                <NoteAddIcon size="small" />
+                            </ListItemIcon>
+                            <ListItemText>
+                                Create Code File
+                            </ListItemText>
+                        </ListItem>
                         <ListItem button onClick={this.deleteAllData}>
                             <ListItemIcon>
                                 <DeleteIcon color="secondary" size="small" />
@@ -342,7 +360,7 @@ class Homescreen extends React.Component{
                     <p>root</p>
                     {
                         this.props.breadcrumbs.length 
-                        ? this.props.breadcrumbs.map(value => <p>{value}</p>)
+                        ? this.props.breadcrumbs.map(value => <p key={value}>{value}</p>)
                         : null
                     }
                     <IconButton disabled={!this.props.path.length} onClick={() => this.props.upOneLevel()}>
@@ -358,19 +376,27 @@ class Homescreen extends React.Component{
                     ?
                     this.props.levels[this.props.levels.length - 1].data
                         ?
-                        Object.values(this.props.levels[this.props.levels.length - 1].data).map((item, index) =>
-                            <ListItem key={index} button onClick={e => this.handleClick(e, index, item)}>
+                        Object.values(this.props.levels[this.props.levels.length - 1].data).map((item) =>
+                            <ListItem key={item.key} button onClick={e => this.handleClick(e, item)}>
                                 <ListItemIcon>
-                                    {item.type === "file" ? <InsertDriveFileIcon /> : <FolderIcon />}
+                                    {item.type === "file" 
+                                    ? item.fileType === "doc" 
+                                        ? <InsertDriveFileIcon /> 
+                                        : item.fileType === "javascript" 
+                                            ? <CodeIcon />
+                                            : item.fileType === "application/pdf"
+                                                ? <PictureAsPdfIcon />
+                                                : <ImageIcon />
+                                    : <FolderIcon />}
                                 </ListItemIcon>
                                 <ListItemText>
                                     {item.name}
                                 </ListItemText>
                                 <ListItemIcon>
-                                    <DeleteIcon onClick={e => this.deleteFile(e, index)} color="secondary"/>
+                                    <DeleteIcon onClick={e => this.deleteFile(e, item.key)} color="secondary"/>
                                 </ListItemIcon>
                                 <ListItemIcon>
-                                    <EditIcon color="primary" onClick={e => this.handleEditOpen(e, index)}/>
+                                    <EditIcon color="primary" onClick={e => this.handleEditOpen(e, item.key)}/>
                                 </ListItemIcon>
                             </ListItem>
                         ) 
@@ -378,19 +404,27 @@ class Homescreen extends React.Component{
                     :
                     this.props.data
                         ?
-                        Object.values(this.props.data).map((item, index) =>
-                        <ListItem key={index} button onClick={e => this.handleClick(e, index, item)}>
+                        Object.values(this.props.data).map((item) =>
+                        <ListItem key={item.key} button onClick={e => this.handleClick(e, item)}>
                             <ListItemIcon>
-                                {item.type === "file" ? <InsertDriveFileIcon /> : <FolderIcon />}
+                                {item.type === "file" 
+                                    ? item.fileType === "doc" 
+                                        ? <InsertDriveFileIcon /> 
+                                        : item.fileType === "javascript" 
+                                            ? <CodeIcon />
+                                            : item.fileType === "application/pdf"
+                                                ? <PictureAsPdfIcon />
+                                                : <ImageIcon />
+                                    : <FolderIcon />}
                             </ListItemIcon>
                             <ListItemText>
                                 {item.name}
                             </ListItemText>
                             <ListItemIcon>
-                                <DeleteIcon onClick={e => this.deleteFile(e, index)} color="secondary"/>
+                                <DeleteIcon onClick={e => this.deleteFile(e, item.key)} color="secondary"/>
                             </ListItemIcon>
                             <ListItemIcon>
-                                <EditIcon color="primary" onClick={e => this.handleEditOpen(e, index)}/>
+                                <EditIcon color="primary" onClick={e => this.handleEditOpen(e, item.key)}/>
                             </ListItemIcon>
                         </ListItem>
                         )
@@ -433,6 +467,13 @@ class Homescreen extends React.Component{
                     submitHandler={this.editFileName}
                     titleIndex={this.state.titleIndex}
                 />
+                <CreateCodeFileModal 
+                    name="newCodeFileOpen" 
+                    open={newCodeFileOpen} 
+                    handleClose={this.handleClose} 
+                    handleSubmit={this.handleSubmit}
+                    type="file"
+                />
             </div>
         )
     }
@@ -452,4 +493,4 @@ const mapStateToProps = state => {
     }
 }
 const ws = withStyles(styles)(Homescreen)
-export default connect(mapStateToProps, { updateText, updateData, updatePath, downOneLevel, upOneLevel, updateFileIndex })(ws);
+export default connect(mapStateToProps, { updateText, updateData, updatePath, downOneLevel, upOneLevel, updateFileIndex, updateCode })(ws);

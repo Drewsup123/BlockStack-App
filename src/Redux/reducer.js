@@ -1,4 +1,4 @@
-import {UPDATE_DATA, UPDATE_TEXT, DOWN_ONE_LEVEL, UP_ONE_LEVEL, UPDATE_FILE_INDEX} from './actions';
+import {UPDATE_DATA, UPDATE_TEXT, DOWN_ONE_LEVEL, UP_ONE_LEVEL, UPDATE_FILE_INDEX, UPDATE_CODE} from './actions';
 
 const initialState = {
     data : {},
@@ -40,6 +40,8 @@ export const reducer = (state = initialState, action) => {
             return {...state, path : updatedPath, levels : updatedLevels, breadcrumbs : updatedBread }
         case UPDATE_FILE_INDEX:
             return {...state, fileIndex : action.payload};
+        case UPDATE_CODE:
+            return { ...state, code : action.payload }
         default:
             return state;
     }
