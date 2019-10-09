@@ -7,6 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import Slide from '@material-ui/core/Slide';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import { CircularProgress } from '@material-ui/core';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -20,6 +21,7 @@ export default class ImportFileModal extends React.Component{
             name : "",
             type : null,
             base64 : "",
+            uploading : false,
         }
     }
 
@@ -40,8 +42,10 @@ export default class ImportFileModal extends React.Component{
     onSubmit = e => {
         // e.preventDefault();
         // name, type, base64
+        this.setState({ uploading : true });
         const {name, type, base64} = this.state;
         this.props.submit(name, type, base64);
+        this.setState({ uploading : false });
     }
 
     toBase64 = file => new Promise((resolve, reject) => {
@@ -87,9 +91,12 @@ export default class ImportFileModal extends React.Component{
                     <Button onClick={() => handleClose(name)} color="primary">
                         Cancel
                     </Button>
-                    <Button disabled={!this.state.selectedFile || !this.state.name} color="primary" onClick={this.onSubmit}>
+                    {this.state.uploading 
+                    ?<CircularProgress />
+                    :<Button disabled={!this.state.selectedFile || !this.state.name} color="primary" onClick={() => {this.setState({uploading : true}); this.onSubmit()}}>
                         Upload
                     </Button>
+                    }
                 </DialogActions>
             </Dialog>
         );

@@ -36,12 +36,20 @@ const styles = {
         paddingTop : "60px"
     },
     toolbar: {
-        width : `calc(100% - 240px)`,
+        width : `100%`,
         display : "flex",
         flexDirection : "row",
         alignItems : "center",
         justifyContent : "space-between"
     },
+    toolbarItem:{
+        width : "20%"
+    },
+    '@media (max-width: 1024px)' : {
+        listText : {
+            display : "none",
+        }
+    }
 };
 
 class Homescreen extends React.Component{
@@ -312,45 +320,45 @@ class Homescreen extends React.Component{
         const { newFileOpen, newFolderOpen, uploadFileOpen, ShowDataOpen, dataItem, editTitleOpen, newCodeFileOpen } = this.state;
         return(
             <div className={classes.root}>
-                <Toolbar className={classes.toolbar}>
+                <Toolbar disableGutters={true} className={classes.toolbar}>
                     <List className={classes.toolbar}>
-                        <ListItem button>
+                        <ListItem className={classes.toolbarItem} button onClick={() => this.handleOpen("newFolderOpen")}>
                             <ListItemIcon>
                                 <CreateNewFolderIcon size="small" />
                             </ListItemIcon>
-                            <ListItemText onClick={() => this.handleOpen("newFolderOpen")}>
+                            <ListItemText className={classes.listText}>
                                 Add Folder
                             </ListItemText>
                         </ListItem>
-                        <ListItem button onClick={() => this.handleOpen("uploadFileOpen")} >
+                        <ListItem className={classes.toolbarItem} button onClick={() => this.handleOpen("uploadFileOpen")} >
                             <ListItemIcon>
                                 <CloudUploadIcon size="small" />
                             </ListItemIcon>
-                            <ListItemText>
+                            <ListItemText className={classes.listText}>
                                 Import File
                             </ListItemText>
                         </ListItem>
-                        <ListItem button onClick={() => this.handleOpen("newFileOpen")}>
+                        <ListItem className={classes.toolbarItem} button onClick={() => this.handleOpen("newFileOpen")}>
                             <ListItemIcon>
                                 <NoteAddIcon size="small" />
                             </ListItemIcon>
-                            <ListItemText>
+                            <ListItemText className={classes.listText}>
                                 Create File
                             </ListItemText>
                         </ListItem>
-                        <ListItem button onClick={() => this.handleOpen("newCodeFileOpen")}>
+                        <ListItem className={classes.toolbarItem} button onClick={() => this.handleOpen("newCodeFileOpen")}>
                             <ListItemIcon>
-                                <NoteAddIcon size="small" />
+                                <CodeIcon size="small" />
                             </ListItemIcon>
-                            <ListItemText>
+                            <ListItemText className={classes.listText}>
                                 Create Code File
                             </ListItemText>
                         </ListItem>
-                        <ListItem button onClick={this.deleteAllData}>
+                        <ListItem className={classes.toolbarItem} button onClick={this.deleteAllData}>
                             <ListItemIcon>
                                 <DeleteIcon color="secondary" size="small" />
                             </ListItemIcon>
-                            <ListItemText>
+                            <ListItemText className={classes.listText}>
                                 DELETE ALL DATA
                             </ListItemText>
                         </ListItem>
