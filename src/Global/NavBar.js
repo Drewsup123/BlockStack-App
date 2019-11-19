@@ -96,13 +96,13 @@ export default function PermanentDrawerLeft() {
                         </ListItemText>
                     </ListItem>
                 </Link>
-                <a style={{color : "black", textDecoration : "none"}}href="https://forms.gle/3Aghwd6aUs6E7Q769" target="_blank" rel="noopener noreferrer">
+                <a style={{color : "black", textDecoration : "none"}}href="https://blocksurvey.org/survey/drewsup123.id.blockstack/d1af961f-0346-44aa-bec8-f2124b973cb9" target="_blank" rel="noopener noreferrer">
                     <ListItem button>
                         <ListItemIcon>
                             <FeedbackIcon size="small" />
                         </ListItemIcon>
                         <ListItemText>
-                            Make a Suggestion
+                            Make a Suggestion (BlockSurvey)
                         </ListItemText>
                     </ListItem>
                 </a>
