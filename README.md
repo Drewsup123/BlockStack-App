@@ -1,5 +1,10 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Feel free to submit report any issues or pull requests
+## Project Links
+Trello Board : https://trello.com/b/KWt9tGPG/decentralized-drive
+Production-Url : www.decentralizeddrive.com
+
 ## Available Scripts
 
 In the project directory, you can run:
