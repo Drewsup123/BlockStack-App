@@ -1,7 +1,7 @@
 {
-  "name": "hello-blockstack",
+  "name": "decentralizeddrive",
   "version": "0.0.0",
-  "description": "A simple Blockstack app using ReactJS",
+  "description": "A decentralized file manager",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/blockstack/hello-blockstack.git"

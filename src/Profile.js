@@ -10,9 +10,11 @@ const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder
 const styles = {
   container : {
     display : "flex",
+    height : "100vh",
     flexDirection : "column",
     justifyContent : "center",
-    alignItems : "center"
+    alignItems : "center",
+
   },
   logoutBtn : {
     height : "100px",
