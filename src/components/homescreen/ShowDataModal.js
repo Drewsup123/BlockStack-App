@@ -12,7 +12,7 @@ export default function ShowDataModal(props){
             <DialogContent>
                 {
                     props.item && props.item.data && (props.item.fileType === "image/png" || props.item.fileType === "image/jpg")
-                    ? <img alt="Your File" style={{maxWidth : "100%"}} src={props.item ? props.item.data : ""} />
+                    ? <div style={{display : "flex", justifyContent : "center", alignItems : "center"}}><img alt="Your File" style={{maxWidth : "100%"}} src={props.item ? props.item.data : ""} /></div>
                     : <iframe title={props.item ? props.item.name : ""} style={{width : "100%", height : "95%"}} src={props.item ? props.item.data : ""} />
                 }
             </DialogContent>

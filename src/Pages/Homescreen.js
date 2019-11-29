@@ -500,5 +500,5 @@ const mapStateToProps = state => {
         breadcrumbs : state.breadcrumbs,
     }
 }
-const ws = withStyles(styles)(Homescreen)
+const ws = withStyles(styles)(Homescreen);
 export default connect(mapStateToProps, { updateText, updateData, updatePath, downOneLevel, upOneLevel, updateFileIndex, updateCode })(ws);
