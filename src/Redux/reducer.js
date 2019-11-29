@@ -39,7 +39,7 @@ export const reducer = (state = initialState, action) => {
             updatedBread.pop();
             return {...state, path : updatedPath, levels : updatedLevels, breadcrumbs : updatedBread }
         case DOWN_MULTIPLE_LEVELS:
-            const i = action.payload;
+            const i = breadcrumbs.length - action.payload;
             const updatedPath1 = [...state.path];
             const updatedLevels1 = [...state.levels]
             const updatedBread1 = [...state.breadcrumbs];

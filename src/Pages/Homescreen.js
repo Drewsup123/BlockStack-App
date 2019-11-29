@@ -27,7 +27,16 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { UserSession } from 'blockstack';
 import { connect } from 'react-redux';
 import createUID from '../functions';
-import { updateText, updatePath, updateData, downOneLevel, upOneLevel, updateFileIndex, updateCode } from '../Redux/actions';
+import { 
+    updateText, 
+    updatePath, 
+    updateData, 
+    downOneLevel, 
+    upOneLevel, 
+    updateFileIndex, 
+    updateCode,
+    downMultipleLevels, 
+} from '../Redux/actions';
 
 const styles = {
     root: {
@@ -369,7 +378,7 @@ class Homescreen extends React.Component{
                     {
                         this.props.breadcrumbs.length 
                         ? this.props.breadcrumbs.map((value, index) => 
-                        <p key={value} backValue={this.props.breadcumbs.length - (index + 1)}>{value}</p>
+                        <p onClick={()=>this.props.downMultipleLevels(index + 1)} key={value}>{value}</p>
                         )
                         : null
                     }
@@ -503,4 +512,4 @@ const mapStateToProps = state => {
     }
 }
 const ws = withStyles(styles)(Homescreen);
-export default connect(mapStateToProps, { updateText, updateData, updatePath, downOneLevel, upOneLevel, updateFileIndex, updateCode })(ws);
+export default connect(mapStateToProps, { updateText, updateData, updatePath, downOneLevel, upOneLevel, updateFileIndex, updateCode, downMultipleLevels })(ws);
