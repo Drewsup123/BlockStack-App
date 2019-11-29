@@ -368,7 +368,9 @@ class Homescreen extends React.Component{
                     <p>root</p>
                     {
                         this.props.breadcrumbs.length 
-                        ? this.props.breadcrumbs.map(value => <p key={value}>{value}</p>)
+                        ? this.props.breadcrumbs.map((value, index) => 
+                        <p key={value} backValue={this.props.breadcumbs.length - (index + 1)}>{value}</p>
+                        )
                         : null
                     }
                     <IconButton disabled={!this.props.path.length} onClick={() => this.props.upOneLevel()}>

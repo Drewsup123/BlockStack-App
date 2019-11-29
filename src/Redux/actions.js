@@ -9,6 +9,7 @@ export const UP_ONE_LEVEL = "UP_ONE_LEVEL";
 export const UPDATE_TEXT = "UPDATE_TEXT";
 export const UPDATE_FILE_INDEX = "UPDATE_FILE_INDEX";
 export const UPDATE_CODE = "UPDATE_CODE";
+export const DOWN_MULTIPLE_LEVELS = "DOWN_MULTIPLE_LEVELS";
 
 export const updateData = (payload) => dispatch => {
     dispatch({type: UPDATE_DATA, payload:payload})
@@ -36,4 +37,8 @@ export const updateCode = code => dispatch => {
 
 export const updateFileIndex = index => dispatch => {
     dispatch({ type : UPDATE_FILE_INDEX, payload : index });
+}
+
+export const downMultipleLevels = backValue => dispatch => {
+    dispatch({ type : DOWN_MULTIPLE_LEVELS, payload : backValue});
 }

@@ -1,4 +1,4 @@
-import {UPDATE_DATA, UPDATE_TEXT, DOWN_ONE_LEVEL, UP_ONE_LEVEL, UPDATE_FILE_INDEX, UPDATE_CODE} from './actions';
+import {UPDATE_DATA, UPDATE_TEXT, DOWN_ONE_LEVEL, UP_ONE_LEVEL, UPDATE_FILE_INDEX, UPDATE_CODE, DOWN_MULTIPLE_LEVELS} from './actions';
 
 const initialState = {
     data : {},
@@ -38,6 +38,18 @@ export const reducer = (state = initialState, action) => {
             updatedLevels.pop();
             updatedBread.pop();
             return {...state, path : updatedPath, levels : updatedLevels, breadcrumbs : updatedBread }
+        case DOWN_MULTIPLE_LEVELS:
+            const i = action.payload;
+            const updatedPath1 = [...state.path];
+            const updatedLevels1 = [...state.levels]
+            const updatedBread1 = [...state.breadcrumbs];
+            console.log(i);
+            for(i; i > 0; i--){
+                updatedPath1.pop()
+                updatedLevels1.pop();
+                updatedBread1.pop();
+            }
+            return {...state, path : updatedPath1, levels : updatedLevels1, breadcrumbs : updatedBread1 };
         case UPDATE_FILE_INDEX:
             return {...state, fileIndex : action.payload};
         case UPDATE_CODE:
