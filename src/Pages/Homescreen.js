@@ -374,11 +374,11 @@ class Homescreen extends React.Component{
                     </List>
                 </Toolbar>
                 <Breadcrumbs aria-label="breadcrumb">
-                    <p>root</p>
+                    <p style={{cursor : "pointer"}} onClick={()=>this.props.downMultipleLevels(0)}>root</p>
                     {
                         this.props.breadcrumbs.length 
                         ? this.props.breadcrumbs.map((value, index) => 
-                        <p onClick={()=>this.props.downMultipleLevels(index + 1)} key={value}>{value}</p>
+                        <p style = {{cursor : "pointer"}}onClick={()=>this.props.downMultipleLevels(index + 1)} key={value}>{value}</p>
                         )
                         : null
                     }
