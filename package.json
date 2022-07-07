@@ -16,7 +16,7 @@
     "@material-ui/icons": "^4.4.1",
     "@material-ui/lab": "^4.0.0-alpha.27",
     "blockstack": "^19.2.5",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "react": "^16.8.6",
     "react-ace": "^7.0.4",
     "react-dom": "^16.8.6",
